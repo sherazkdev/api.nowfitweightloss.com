@@ -169,7 +169,7 @@ export const envSchema = z.object({
   const weakSecret = (value: string) =>
     value.includes("CHANGE_ME") || value.length < 32;
 
-  if (data.ADMIN_SEED_ENABLED) {
+  if (data.ADMIN_SEED_ENABLED && process.env.WL_CLI_BOOTSTRAP !== "1") {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       path: ["ADMIN_SEED_ENABLED"],

@@ -24,13 +24,24 @@
     "docker:logs": "docker compose logs -f api worker admin",
     "lint": "npm run lint -w @weightloss/admin",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "build:seed-tools": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/database -w @weightloss/shared -w @weightloss/cache -w @weightloss/auth",
+    "build:seed-tools": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/shared -w @weightloss/database -w @weightloss/cache -w @weightloss/auth",
     "seed": "npm run build:seed-tools && tsx scripts/seed.ts",
     "db:reset": "npm run build:seed-tools && tsx scripts/seed.ts --reset",
-    "db:indexes": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/database && tsx scripts/create-indexes.ts",
-    "db:verify-indexes": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/database && tsx scripts/verify-indexes.ts",
+    "db:indexes": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/shared -w @weightloss/database && tsx scripts/create-indexes.ts",
+    "db:verify-indexes": "npm run build -w @weightloss/config -w @weightloss/contracts -w @weightloss/logger -w @weightloss/shared -w @weightloss/database && tsx scripts/verify-indexes.ts",
     "db:seed-admin": "npm run seed",
-    "storage:migrate-local-to-s3": "npm run build -w @weightloss/config -w @weightloss/storage && tsx scripts/migrate-local-to-s3.ts"
+    "storage:migrate-local-to-s3": "npm run build -w @weightloss/config -w @weightloss/storage && tsx scripts/migrate-local-to-s3.ts",
+    "postinstall": "node scripts/ensure-native-deps.mjs"
+  },
+  "optionalDependencies": {
+    "lightningcss-darwin-arm64": "1.32.0",
+    "lightningcss-darwin-x64": "1.32.0",
+    "lightningcss-linux-arm64-gnu": "1.32.0",
+    "lightningcss-linux-arm64-musl": "1.32.0",
+    "lightningcss-linux-x64-gnu": "1.32.0",
+    "lightningcss-linux-x64-musl": "1.32.0",
+    "lightningcss-win32-arm64-msvc": "1.32.0",
+    "lightningcss-win32-x64-msvc": "1.32.0"
   },
   "devDependencies": {
     "tsx": "^4.19.3",

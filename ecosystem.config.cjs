@@ -1,0 +1,38 @@
+module.exports = {
+  apps: [
+    {
+      name: "weight-loss-v2-api",
+      cwd: __dirname,
+      script: "apps/api/dist/index.js",
+      interpreter: "node",
+      instances: 1,
+      exec_mode: "fork",
+      env: { NODE_ENV: "production" },
+      restart_delay: 3000,
+      max_restarts: 10,
+    },
+    {
+      name: "weight-loss-v2-worker",
+      cwd: __dirname,
+      script: "apps/worker/dist/index.js",
+      interpreter: "node",
+      instances: 1,
+      exec_mode: "fork",
+      env: { NODE_ENV: "production" },
+      restart_delay: 3000,
+      max_restarts: 10,
+    },
+    {
+      name: "weight-loss-v2-admin",
+      cwd: `${__dirname}/apps/admin`,
+      script: "node_modules/next/dist/bin/next",
+      args: "start -H 127.0.0.1 -p 3050",
+      interpreter: "node",
+      instances: 1,
+      exec_mode: "fork",
+      env: { NODE_ENV: "production" },
+      restart_delay: 3000,
+      max_restarts: 10,
+    },
+  ],
+};

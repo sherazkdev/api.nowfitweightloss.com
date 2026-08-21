@@ -88,8 +88,30 @@ npm run db:indexes
 Bootstrap admin (first deploy only):
 
 ```powershell
-# Temporarily set ADMIN_SEED_ENABLED=true in .env, start API once, then set false
+# Keep ADMIN_SEED_ENABLED=false in production .env — CLI seed bypasses that guard.
 npm run db:seed-admin
+```
+
+On Linux VPS after `git pull`, always reinstall deps on the server (do not copy `node_modules` from Windows):
+
+```bash
+cd /var/www/weight-loss-v2
+git pull origin main
+git restore package-lock.json   # if a broken 6-line lock file appears
+rm -rf node_modules apps/admin/.next
+npm ci
+npm run build:api
+npm run build:worker
+npm run build:admin
+pm2 start ecosystem.config.cjs
+pm2 save
+```
+
+If admin build fails with `lightningcss.linux-x64-gnu.node` missing:
+
+```bash
+node scripts/ensure-native-deps.mjs
+npm run build:admin
 ```
 
 ### 4. Run processes

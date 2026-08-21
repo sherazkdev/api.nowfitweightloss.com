@@ -11,6 +11,7 @@ import {
 } from "@weightloss/database";
 import { createLogger } from "@weightloss/logger";
 
+process.env.WL_CLI_BOOTSTRAP = "1";
 const env = loadEnvSafe();
 const log = createLogger({ name: "seed", level: env.LOG_LEVEL });
 const reset = process.argv.includes("--reset");
