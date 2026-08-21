@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "name": "Beginner",
+    "slug": "beginner",
+    "description": "Foundational movement patterns.",
+    "icon": null,
+    "image": null,
+    "imageKey": null,
+    "sortOrder": 1,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "Intermediate",
+    "slug": "intermediate",
+    "description": "Moderate intensity workouts.",
+    "icon": null,
+    "image": null,
+    "imageKey": null,
+    "sortOrder": 2,
+    "isActive": true
+  }
+]

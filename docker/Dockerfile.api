@@ -1,0 +1,35 @@
+FROM node:20-bookworm-slim AS base
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends wget && rm -rf /var/lib/apt/lists/*
+
+FROM base AS deps
+COPY package.json package-lock.json ./
+COPY apps/api/package.json apps/api/
+COPY apps/worker/package.json apps/worker/
+COPY apps/admin/package.json apps/admin/
+COPY packages/config/package.json packages/config/
+COPY packages/contracts/package.json packages/contracts/
+COPY packages/logger/package.json packages/logger/
+COPY packages/shared/package.json packages/shared/
+COPY packages/database/package.json packages/database/
+COPY packages/cache/package.json packages/cache/
+COPY packages/auth/package.json packages/auth/
+COPY packages/storage/package.json packages/storage/
+COPY packages/queue/package.json packages/queue/
+RUN npm ci
+
+FROM deps AS build
+COPY . .
+RUN npm run build:api
+
+FROM base AS runtime
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/apps/api/package.json ./apps/api/package.json
+COPY --from=build /app/apps/api/dist ./apps/api/dist
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/public/uploads ./public/uploads
+RUN mkdir -p public/uploads tmp
+EXPOSE 5000
+CMD ["node", "apps/api/dist/index.js"]

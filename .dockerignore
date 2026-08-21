@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+**/node_modules
+**/.next
+**/dist
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+!.env.production.example
+!.env.docker.example
+**/*.md
+!README.md
+.cursor
+terminals
+**/.turbo
+**/coverage
+**/*.log
+tmp
+public/uploads/**
+!public/uploads/.gitkeep

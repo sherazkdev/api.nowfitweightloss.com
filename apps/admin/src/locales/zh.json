@@ -1,0 +1,20 @@
+{
+  "editingLanguage": "内容语言",
+  "fallbackHint": "Empty fields fall back to English.",
+  "englishRequired": "English is required. Other languages are optional.",
+  "gender.male": "男",
+  "gender.female": "女",
+  "gender.both": "全部",
+  "difficulty.easy": "简单",
+  "difficulty.medium": "中等",
+  "difficulty.hard": "困难",
+  "status.active": "启用",
+  "status.inactive": "停用",
+  "nav.dashboard": "仪表盘",
+  "nav.mealCategories": "Meal Categories",
+  "nav.meals": "餐食",
+  "nav.workoutLevels": "Workout Levels",
+  "nav.workoutCategories": "Workout Categories",
+  "nav.exercises": "训练",
+  "nav.changePassword": "修改密码"
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@weightloss/worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@weightloss/cache": "*",
+    "@weightloss/config": "*",
+    "@weightloss/database": "*",
+    "@weightloss/logger": "*",
+    "@weightloss/queue": "*",
+    "@weightloss/shared": "*",
+    "@weightloss/storage": "*",
+    "bullmq": "^5.41.0",
+    "ioredis": "^5.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.19.3",
+    "typescript": "^5"
+  }
+}

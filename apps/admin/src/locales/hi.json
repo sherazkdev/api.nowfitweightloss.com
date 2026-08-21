@@ -1,0 +1,20 @@
+{
+  "editingLanguage": "सामग्री भाषा",
+  "fallbackHint": "खाली फ़ील्ड अंग्रेज़ी पर वापस जाएंगे।",
+  "englishRequired": "अंग्रेज़ी ज़रूरी है। बाकी भाषाएँ वैकल्पिक हैं।",
+  "gender.male": "पुरुष",
+  "gender.female": "महिला",
+  "gender.both": "दोनों",
+  "difficulty.easy": "आसान",
+  "difficulty.medium": "मध्यम",
+  "difficulty.hard": "कठिन",
+  "status.active": "सक्रिय",
+  "status.inactive": "निष्क्रिय",
+  "nav.dashboard": "डैशबोर्ड",
+  "nav.mealCategories": "भोजन श्रेणियाँ",
+  "nav.meals": "भोजन",
+  "nav.workoutLevels": "वर्कआउट स्तर",
+  "nav.workoutCategories": "वर्कआउट श्रेणियाँ",
+  "nav.exercises": "व्यायाम",
+  "nav.changePassword": "पासवर्ड बदलें"
+}

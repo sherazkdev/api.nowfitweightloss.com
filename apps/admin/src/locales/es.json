@@ -1,0 +1,20 @@
+{
+  "editingLanguage": "Idioma del contenido",
+  "fallbackHint": "Los campos vacíos usan inglés.",
+  "englishRequired": "English is required. Other languages are optional.",
+  "gender.male": "Hombre",
+  "gender.female": "Mujer",
+  "gender.both": "Ambos",
+  "difficulty.easy": "Fácil",
+  "difficulty.medium": "Media",
+  "difficulty.hard": "Difícil",
+  "status.active": "Activo",
+  "status.inactive": "Inactivo",
+  "nav.dashboard": "Panel",
+  "nav.mealCategories": "Meal Categories",
+  "nav.meals": "Comidas",
+  "nav.workoutLevels": "Workout Levels",
+  "nav.workoutCategories": "Workout Categories",
+  "nav.exercises": "Ejercicios",
+  "nav.changePassword": "Cambiar contraseña"
+}

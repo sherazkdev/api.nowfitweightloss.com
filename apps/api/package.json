@@ -1,0 +1,37 @@
+{
+  "name": "@weightloss/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -b tsconfig.json --force",
+    "prestart": "npm run build",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@fastify/cookie": "^11.0.2",
+    "@fastify/cors": "^10.0.2",
+    "@fastify/multipart": "^10.1.1",
+    "@fastify/static": "^10.1.3",
+    "@fastify/swagger": "^9.8.1",
+    "@fastify/swagger-ui": "^6.1.1",
+    "@weightloss/auth": "*",
+    "@weightloss/cache": "*",
+    "@weightloss/config": "*",
+    "@weightloss/contracts": "*",
+    "@weightloss/database": "*",
+    "@weightloss/logger": "*",
+    "@weightloss/metrics": "*",
+    "@weightloss/queue": "*",
+    "@weightloss/shared": "*",
+    "fastify": "^5.2.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "tsx": "^4.19.3",
+    "typescript": "^5"
+  }
+}

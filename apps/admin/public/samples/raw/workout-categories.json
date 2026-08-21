@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "levelIds": [1],
+    "name": "Full Body",
+    "slug": "full-body",
+    "description": "Total-body strength and conditioning.",
+    "image": null,
+    "imageKey": null,
+    "gender": "both",
+    "isChallenge": false,
+    "sortOrder": 1,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "levelIds": [1, 2],
+    "name": "Cardio",
+    "slug": "cardio",
+    "description": "Heart-rate focused sessions.",
+    "image": null,
+    "imageKey": null,
+    "gender": "both",
+    "isChallenge": false,
+    "sortOrder": 2,
+    "isActive": true
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "editingLanguage": "Язык контента",
+  "fallbackHint": "Empty fields fall back to English.",
+  "englishRequired": "English is required. Other languages are optional.",
+  "gender.male": "Мужской",
+  "gender.female": "Женский",
+  "gender.both": "Оба",
+  "difficulty.easy": "Лёгкий",
+  "difficulty.medium": "Средний",
+  "difficulty.hard": "Сложный",
+  "status.active": "Активно",
+  "status.inactive": "Неактивно",
+  "nav.dashboard": "Панель",
+  "nav.mealCategories": "Meal Categories",
+  "nav.meals": "Блюда",
+  "nav.workoutLevels": "Workout Levels",
+  "nav.workoutCategories": "Workout Categories",
+  "nav.exercises": "Упражнения",
+  "nav.changePassword": "Сменить пароль"
+}

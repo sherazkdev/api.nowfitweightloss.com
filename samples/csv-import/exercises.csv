@@ -1,0 +1,4 @@
+id,title,slug,level_ids,category_ids,short_description,description,difficulty,gender,challenge,is_active,sort_order,calories_min,calories_max,reps_min,reps_max,sets_min,sets_max,duration_min,duration_max
+1,Bodyweight Squat,bodyweight-squat,1,1,Basic lower-body movement.,Stand with feet shoulder-width apart squat down return to stand.,Beginner,both,false,true,1,40,60,10,15,3,4,0,0
+2,Jumping Jacks,jumping-jacks,1,2,Simple cardio warm-up.,Jump feet out while raising arms overhead return to start.,Beginner,both,false,true,2,30,50,0,0,1,1,30,60
+3,Mountain Climbers,mountain-climbers,1|2,1|2,Core and cardio combination.,From a plank drive knees toward the chest in a running motion.,Intermediate,both,false,true,3,50,80,0,0,3,4,20,40

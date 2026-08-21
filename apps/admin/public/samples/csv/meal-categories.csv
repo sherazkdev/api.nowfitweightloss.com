@@ -1,0 +1,4 @@
+id,name,slug,description,sort_order,is_active
+1,Breakfast,breakfast,High-protein morning meals.,1,true
+2,Lunch,lunch,Balanced midday plates.,2,true
+3,Dinner,dinner,Lighter evening meals.,3,true

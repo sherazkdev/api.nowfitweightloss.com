@@ -1,0 +1,171 @@
+[
+  {
+    "id": 1,
+    "categoryIds": [1],
+    "title": "Greek Yogurt Parfait",
+    "shortTitle": "Yogurt Parfait",
+    "description": "Quick breakfast with protein and berries.",
+    "image": null,
+    "imageKey": null,
+    "nutrition": {
+      "caloriesMin": 280,
+      "caloriesMax": 320,
+      "proteinMin": 18,
+      "proteinMax": 22,
+      "carbsMin": 32,
+      "carbsMax": 38,
+      "fatsMin": 6,
+      "fatsMax": 9,
+      "fiberMin": 4,
+      "fiberMax": 6,
+      "sugarMin": 12,
+      "sugarMax": 16,
+      "sodiumMin": 80,
+      "sodiumMax": 120
+    },
+    "minWeight": 0,
+    "maxWeight": 999,
+    "prepTimeMinutes": 10,
+    "difficulty": "Easy",
+    "servingSize": "1 bowl",
+    "gender": "both",
+    "isChallenge": false,
+    "isActive": true,
+    "sortOrder": 1,
+    "ingredients": [
+      { "name": "Greek yogurt", "quantity": "1", "unit": "cup", "sortOrder": 1 },
+      { "name": "Mixed berries", "quantity": "1/2", "unit": "cup", "sortOrder": 2 }
+    ],
+    "instructions": [
+      { "step": 1, "text": "Layer yogurt and berries in a bowl." },
+      { "step": 2, "text": "Serve immediately." }
+    ]
+  },
+  {
+    "id": 2,
+    "categoryIds": [2],
+    "title": "Grilled Chicken Bowl",
+    "shortTitle": "Chicken Bowl",
+    "description": "Lean protein with rice and vegetables.",
+    "image": null,
+    "imageKey": null,
+    "nutrition": {
+      "caloriesMin": 420,
+      "caloriesMax": 480,
+      "proteinMin": 35,
+      "proteinMax": 42,
+      "carbsMin": 45,
+      "carbsMax": 55,
+      "fatsMin": 8,
+      "fatsMax": 12,
+      "fiberMin": 5,
+      "fiberMax": 8,
+      "sugarMin": 4,
+      "sugarMax": 8,
+      "sodiumMin": 400,
+      "sodiumMax": 550
+    },
+    "minWeight": 60,
+    "maxWeight": 120,
+    "prepTimeMinutes": 25,
+    "difficulty": "Medium",
+    "servingSize": "1 bowl",
+    "gender": "both",
+    "isChallenge": false,
+    "isActive": true,
+    "sortOrder": 2,
+    "ingredients": [
+      { "name": "Chicken breast", "quantity": "150", "unit": "g", "sortOrder": 1 },
+      { "name": "Brown rice", "quantity": "1", "unit": "cup", "sortOrder": 2 }
+    ],
+    "instructions": [
+      { "step": 1, "text": "Grill chicken until cooked through." },
+      { "step": 2, "text": "Serve over rice with vegetables." }
+    ]
+  },
+  {
+    "id": 3,
+    "categoryIds": [3],
+    "title": "Lemon Herb Salmon",
+    "shortTitle": "Salmon Plate",
+    "description": "Light dinner with salmon and greens.",
+    "image": null,
+    "imageKey": null,
+    "nutrition": {
+      "caloriesMin": 380,
+      "caloriesMax": 440,
+      "proteinMin": 32,
+      "proteinMax": 38,
+      "carbsMin": 12,
+      "carbsMax": 18,
+      "fatsMin": 16,
+      "fatsMax": 22,
+      "fiberMin": 3,
+      "fiberMax": 5,
+      "sugarMin": 2,
+      "sugarMax": 4,
+      "sodiumMin": 320,
+      "sodiumMax": 420
+    },
+    "minWeight": 0,
+    "maxWeight": 999,
+    "prepTimeMinutes": 20,
+    "difficulty": "Medium",
+    "servingSize": "1 plate",
+    "gender": "both",
+    "isChallenge": false,
+    "isActive": true,
+    "sortOrder": 3,
+    "ingredients": [
+      { "name": "Salmon fillet", "quantity": "140", "unit": "g", "sortOrder": 1 },
+      { "name": "Mixed greens", "quantity": "2", "unit": "cups", "sortOrder": 2 }
+    ],
+    "instructions": [
+      { "step": 1, "text": "Bake salmon with lemon and herbs." },
+      { "step": 2, "text": "Plate with greens and serve." }
+    ]
+  },
+  {
+    "id": 4,
+    "categoryIds": [1, 2],
+    "title": "Chicken Berry Salad",
+    "shortTitle": "Berry Salad",
+    "description": "Protein salad that works for breakfast prep or lunch.",
+    "image": null,
+    "imageKey": null,
+    "nutrition": {
+      "caloriesMin": 310,
+      "caloriesMax": 360,
+      "proteinMin": 24,
+      "proteinMax": 28,
+      "carbsMin": 22,
+      "carbsMax": 28,
+      "fatsMin": 8,
+      "fatsMax": 12,
+      "fiberMin": 5,
+      "fiberMax": 7,
+      "sugarMin": 8,
+      "sugarMax": 12,
+      "sodiumMin": 220,
+      "sodiumMax": 300
+    },
+    "minWeight": 0,
+    "maxWeight": 999,
+    "prepTimeMinutes": 15,
+    "difficulty": "Easy",
+    "servingSize": "1 bowl",
+    "gender": "both",
+    "isChallenge": false,
+    "isActive": true,
+    "sortOrder": 4,
+    "ingredients": [
+      { "name": "Grilled chicken", "quantity": "100", "unit": "g", "sortOrder": 1 },
+      { "name": "Mixed berries", "quantity": "1/2", "unit": "cup", "sortOrder": 2 },
+      { "name": "Spinach", "quantity": "2", "unit": "cups", "sortOrder": 3 }
+    ],
+    "instructions": [
+      { "step": 1, "text": "Slice chicken and toss with spinach." },
+      { "step": 2, "text": "Top with berries and serve." }
+    ]
+  }
+]

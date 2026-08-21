@@ -1,0 +1,5 @@
+id,title,slug,category_ids,short_title,description,gender,challenge,is_active,sort_order,difficulty,prep_time_minutes,serving_size,calories_min,calories_max,protein_min,protein_max
+1,Greek Yogurt Parfait,greek-yogurt-parfait,1,Yogurt Parfait,Quick breakfast with protein and berries.,both,false,true,1,Easy,10,1 bowl,280,320,18,22
+2,Grilled Chicken Bowl,grilled-chicken-bowl,2,Chicken Bowl,Lean protein with rice and vegetables.,both,false,true,2,Medium,25,1 bowl,420,480,35,42
+3,Lemon Herb Salmon,lemon-herb-salmon,3,Salmon Plate,Light dinner with salmon and greens.,both,false,true,3,Medium,20,1 plate,380,440,32,38
+4,Chicken Berry Salad,chicken-berry-salad,1|2,Berry Salad,Protein salad that works for breakfast prep or lunch.,both,false,true,4,Easy,15,1 bowl,310,360,24,28

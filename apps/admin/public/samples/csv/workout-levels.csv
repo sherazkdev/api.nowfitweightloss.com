@@ -1,0 +1,3 @@
+id,name,slug,description,sort_order,is_active
+1,Beginner,beginner,Foundational movement patterns.,1,true
+2,Intermediate,intermediate,Moderate intensity workouts.,2,true

@@ -1,0 +1,20 @@
+{
+  "editingLanguage": "Bahasa konten",
+  "fallbackHint": "Empty fields fall back to English.",
+  "englishRequired": "English is required. Other languages are optional.",
+  "gender.male": "Pria",
+  "gender.female": "Wanita",
+  "gender.both": "Keduanya",
+  "difficulty.easy": "Mudah",
+  "difficulty.medium": "Sedang",
+  "difficulty.hard": "Sulit",
+  "status.active": "Aktif",
+  "status.inactive": "Nonaktif",
+  "nav.dashboard": "Dashboard",
+  "nav.mealCategories": "Meal Categories",
+  "nav.meals": "Makanan",
+  "nav.workoutLevels": "Workout Levels",
+  "nav.workoutCategories": "Workout Categories",
+  "nav.exercises": "Latihan",
+  "nav.changePassword": "Ubah kata sandi"
+}

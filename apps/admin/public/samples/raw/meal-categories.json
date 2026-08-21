@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "Breakfast",
+    "slug": "breakfast",
+    "description": "High-protein morning meals.",
+    "icon": null,
+    "image": null,
+    "imageKey": null,
+    "sortOrder": 1,
+    "isActive": true
+  },
+  {
+    "id": 2,
+    "name": "Lunch",
+    "slug": "lunch",
+    "description": "Balanced midday plates.",
+    "icon": null,
+    "image": null,
+    "imageKey": null,
+    "sortOrder": 2,
+    "isActive": true
+  },
+  {
+    "id": 3,
+    "name": "Dinner",
+    "slug": "dinner",
+    "description": "Lighter evening meals.",
+    "icon": null,
+    "image": null,
+    "imageKey": null,
+    "sortOrder": 3,
+    "isActive": true
+  }
+]
