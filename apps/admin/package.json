@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit"
@@ -28,6 +28,14 @@
     "typescript": "^5"
   },
   "optionalDependencies": {
+    "@tailwindcss/oxide-darwin-arm64": "4.3.3",
+    "@tailwindcss/oxide-darwin-x64": "4.3.3",
+    "@tailwindcss/oxide-linux-arm64-gnu": "4.3.3",
+    "@tailwindcss/oxide-linux-arm64-musl": "4.3.3",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.3",
+    "@tailwindcss/oxide-linux-x64-musl": "4.3.3",
+    "@tailwindcss/oxide-win32-arm64-msvc": "4.3.3",
+    "@tailwindcss/oxide-win32-x64-msvc": "4.3.3",
     "lightningcss-darwin-arm64": "1.32.0",
     "lightningcss-darwin-x64": "1.32.0",
     "lightningcss-linux-arm64-gnu": "1.32.0",

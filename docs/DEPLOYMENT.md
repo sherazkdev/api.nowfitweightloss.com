@@ -107,12 +107,14 @@ pm2 start ecosystem.config.cjs
 pm2 save
 ```
 
-If admin build fails with `lightningcss.linux-x64-gnu.node` missing:
+If admin build fails with missing native bindings (`lightningcss` or `@tailwindcss/oxide`):
 
 ```bash
 node scripts/ensure-native-deps.mjs
 npm run build:admin
 ```
+
+Admin production build uses webpack (`next build --webpack`) for reliable Linux VPS builds.
 
 ### 4. Run processes
 
