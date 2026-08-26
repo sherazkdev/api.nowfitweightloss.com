@@ -219,14 +219,6 @@ export const envSchema = z.object({
     });
   }
 
-  if (data.API_DOCS_ENABLED) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      path: ["API_DOCS_ENABLED"],
-      message: "Set API_DOCS_ENABLED=false in production unless docs are intentionally public",
-    });
-  }
-
   if (data.METRICS_ENABLED && !data.METRICS_TOKEN?.trim()) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,

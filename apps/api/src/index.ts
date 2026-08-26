@@ -175,6 +175,9 @@ async function main() {
     log.info("redis_connected");
 
     if (env.API_DOCS_ENABLED) {
+      if (env.NODE_ENV === "production") {
+        log.warn("api_docs_enabled_in_production");
+      }
       await registerSwagger(app, env);
     } else {
       log.info("api_docs_disabled");
