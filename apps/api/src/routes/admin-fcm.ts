@@ -19,10 +19,22 @@ function validationError(reply: FastifyReply, message: string) {
   });
 }
 
+const adminDocsSecurity: Array<{ [securityLabel: string]: string[] }> = [
+  { BearerAuth: [] },
+  { ApiKeyAuth: [] },
+];
+
 export async function registerAdminFcmRoutes(app: FastifyInstance) {
   app.get(
     "/api/admin/fcm/overview",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["FCM"],
+        summary: "FCM overview dashboard data",
+        security: adminDocsSecurity,
+      },
+    },
     async (request, reply) => {
       const result = await app.cache.adminGetOrSet(
         "fcmOverview",
@@ -47,7 +59,21 @@ export async function registerAdminFcmRoutes(app: FastifyInstance) {
 
   app.post(
     "/api/admin/fcm/test-notification",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["FCM"],
+        summary: "Send an FCM test push",
+        security: adminDocsSecurity,
+        body: {
+          type: "object",
+          required: ["fcm_token"],
+          properties: {
+            fcm_token: { type: "string", description: "Target device FCM token" },
+          },
+        },
+      },
+    },
     async (request, reply) => {
       const parsed = testBodySchema.safeParse(request.body);
       if (!parsed.success) {

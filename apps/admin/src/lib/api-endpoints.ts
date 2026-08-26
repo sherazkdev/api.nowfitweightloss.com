@@ -19,13 +19,16 @@ export const PUBLIC_ENDPOINTS: EndpointRow[] = [
   { method: "GET", path: "/api/v1/workout-categories/:categoryId/exercises", desc: "Exercises in a category", auth: "bearer-or-key", group: "Public v1" },
   { method: "GET", path: "/api/v1/exercises", desc: "List exercises with filters", auth: "bearer-or-key", group: "Public v1" },
   { method: "GET", path: "/api/v1/exercises/:id", desc: "Exercise detail", auth: "bearer-or-key", group: "Public v1" },
-  { method: "GET", path: "/api/v1/workout-reminders", desc: "List user workout reminders (Firebase Bearer)", auth: "bearer", group: "Mobile v1" },
-  { method: "POST", path: "/api/v1/workout-reminders", desc: "Create workout reminder", auth: "bearer", group: "Mobile v1" },
-  { method: "PUT", path: "/api/v1/workout-reminders/:id", desc: "Update workout reminder", auth: "bearer", group: "Mobile v1" },
-  { method: "PATCH", path: "/api/v1/workout-reminders/:id/toggle", desc: "Enable/disable reminder", auth: "bearer", group: "Mobile v1" },
-  { method: "DELETE", path: "/api/v1/workout-reminders/:id", desc: "Delete workout reminder", auth: "bearer", group: "Mobile v1" },
-  { method: "POST", path: "/api/v1/devices", desc: "Register FCM device token", auth: "bearer", group: "Mobile v1" },
-  { method: "DELETE", path: "/api/v1/devices", desc: "Unregister FCM device token", auth: "bearer", group: "Mobile v1" },
+];
+
+export const MOBILE_ENDPOINTS: EndpointRow[] = [
+  { method: "GET", path: "/api/v1/workout-reminders", desc: "List reminders. Query: gender=male|female (required). Firebase Bearer.", auth: "bearer", group: "Mobile v1" },
+  { method: "POST", path: "/api/v1/workout-reminders", desc: "Create reminder. Body: hour, minute, days (0=Sun–6=Sat), gender, timezone, enabled?", auth: "bearer", group: "Mobile v1" },
+  { method: "PUT", path: "/api/v1/workout-reminders/:id", desc: "Update reminder. Same body as create.", auth: "bearer", group: "Mobile v1" },
+  { method: "PATCH", path: "/api/v1/workout-reminders/:id/toggle", desc: "Pause/resume. Body: { enabled: boolean }", auth: "bearer", group: "Mobile v1" },
+  { method: "DELETE", path: "/api/v1/workout-reminders/:id", desc: "Delete reminder", auth: "bearer", group: "Mobile v1" },
+  { method: "POST", path: "/api/v1/devices", desc: "Register FCM token. Body: { fcm_token, platform: android|ios }", auth: "bearer", group: "Mobile v1" },
+  { method: "DELETE", path: "/api/v1/devices", desc: "Unregister FCM token. Body: { fcm_token }", auth: "bearer", group: "Mobile v1" },
 ];
 
 export const PLATFORM_ENDPOINTS: EndpointRow[] = [
@@ -73,16 +76,16 @@ export const ADMIN_CONTENT_ENDPOINTS: EndpointRow[] = [
   { method: "PUT", path: "/api/admin/exercises/:id", desc: "Update exercise", auth: "bearer-or-key", group: "Admin content" },
   { method: "DELETE", path: "/api/admin/exercises/:id", desc: "Delete exercise", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/workout-reminders/summary", desc: "Workout reminder stats + analytics", auth: "bearer-or-key", group: "Admin content" },
-  { method: "GET", path: "/api/admin/workout-reminders", desc: "List workout reminders (paginated)", auth: "bearer-or-key", group: "Admin content" },
-  { method: "PATCH", path: "/api/admin/workout-reminders/:id/toggle", desc: "Toggle reminder enabled", auth: "bearer-or-key", group: "Admin content" },
+  { method: "GET", path: "/api/admin/workout-reminders", desc: "List reminders. Query: gender, status=enabled|paused, timezone, search, page, limit, cursor", auth: "bearer-or-key", group: "Admin content" },
+  { method: "PATCH", path: "/api/admin/workout-reminders/:id/toggle", desc: "Toggle reminder. Body: { enabled }", auth: "bearer-or-key", group: "Admin content" },
   { method: "DELETE", path: "/api/admin/workout-reminders/:id", desc: "Delete workout reminder", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/devices/summary", desc: "Device stats + analytics", auth: "bearer-or-key", group: "Admin content" },
-  { method: "GET", path: "/api/admin/devices", desc: "List registered FCM devices (paginated)", auth: "bearer-or-key", group: "Admin content" },
+  { method: "GET", path: "/api/admin/devices", desc: "List FCM devices. Query: platform=android|ios, status=active|stale, search, page, limit, cursor", auth: "bearer-or-key", group: "Admin content" },
   { method: "DELETE", path: "/api/admin/devices/:id", desc: "Delete registered device", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/fcm/overview", desc: "FCM overview dashboard data", auth: "bearer-or-key", group: "Admin content" },
-  { method: "POST", path: "/api/admin/fcm/test-notification", desc: "Send FCM test push", auth: "bearer-or-key", group: "Admin content" },
-  { method: "GET", path: "/api/admin/delivery-logs/summary", desc: "Delivery log stats + analytics", auth: "bearer-or-key", group: "Admin content" },
-  { method: "GET", path: "/api/admin/delivery-logs", desc: "List notification delivery logs", auth: "bearer-or-key", group: "Admin content" },
+  { method: "POST", path: "/api/admin/fcm/test-notification", desc: "Send FCM test push. Body: { fcm_token }", auth: "bearer-or-key", group: "Admin content" },
+  { method: "GET", path: "/api/admin/delivery-logs/summary", desc: "Delivery stats. Query: days (1–90, default 30)", auth: "bearer-or-key", group: "Admin content" },
+  { method: "GET", path: "/api/admin/delivery-logs", desc: "List delivery logs. Query: status, platform, search, days, page, limit, cursor", auth: "bearer-or-key", group: "Admin content" },
   { method: "POST", path: "/api/admin/delivery-logs/:id/retry", desc: "Retry failed reminder push", auth: "bearer-or-key", group: "Admin content" },
   { method: "POST", path: "/api/admin/media/upload", desc: "Upload image, video, or Lottie JSON", auth: "bearer-or-key", group: "Admin content" },
   { method: "POST", path: "/api/admin/data/import-csv", desc: "Queue CSV import job", auth: "bearer-or-key", group: "Admin data" },
@@ -93,6 +96,7 @@ export const ADMIN_CONTENT_ENDPOINTS: EndpointRow[] = [
 
 export const ALL_ENDPOINT_GROUPS = [
   { id: "public", title: "Public content API", rows: PUBLIC_ENDPOINTS },
+  { id: "mobile", title: "Mobile reminders (Firebase)", rows: MOBILE_ENDPOINTS },
   { id: "platform", title: "Platform & docs", rows: PLATFORM_ENDPOINTS },
   { id: "auth", title: "Admin authentication", rows: ADMIN_AUTH_ENDPOINTS },
   { id: "keys", title: "API keys (x-api-key)", rows: ADMIN_API_KEY_ENDPOINTS },
@@ -111,6 +115,8 @@ export function authBadge(auth: EndpointRow["auth"]): { label: string; tone: "gr
       return { label: "Bearer JWT only", tone: "orange" };
     case "public":
       return { label: "Public + ETag", tone: "green" };
+    case "bearer":
+      return { label: "Firebase Bearer", tone: "orange" };
     case "none":
       return { label: "No auth", tone: "muted" };
     default:

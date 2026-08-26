@@ -1,5 +1,6 @@
 import type { AppEnv } from "@weightloss/config";
 import { langOpenApiParameter } from "./lang-param.js";
+import { PUBLIC_REMINDER_TAGS, publicReminderPaths } from "./public-reminders.js";
 
 const langParam = { ...langOpenApiParameter };
 
@@ -21,7 +22,7 @@ export function buildPublicV1OpenApi(env: AppEnv) {
       title: "WeightLoss Public Content API",
       version: "1.0.0",
       description: [
-        "Read-only JSON API for meals and workouts. Responses use snake_case field names.",
+        "JSON API for meals, workouts, and mobile workout reminders. Content responses use snake_case field names.",
         "",
         "## Authentication (required)",
         "Every content GET needs **x-api-key** or **Bearer JWT**. Without either, the API returns **401** and no data.",
@@ -40,6 +41,14 @@ export function buildPublicV1OpenApi(env: AppEnv) {
         "If a record has no translation for that locale, the API still returns **English** (fallback). The JSON shape stays a single string per field (`title`, `name`, …), not a 15-key object.",
         "",
         "Requests without `lang` return 422. Requests without x-api-key / Bearer return 401.",
+        "",
+        "## Workout reminders (mobile app)",
+        "Reminders and device APIs use a **Firebase ID token**, not x-api-key and not the admin JWT.",
+        "1. Authorize with **FirebaseBearer** (paste the Firebase ID token).",
+        "2. Open tag **Reminders** or **Devices**.",
+        "3. GET `/api/v1/workout-reminders` requires query `gender=male` or `gender=female`.",
+        "4. Create/update body: `hour`, `minute`, `days` (0=Sun … 6=Sat), `gender`, `timezone` (IANA), optional `enabled`.",
+        "5. Register the FCM token with POST `/api/v1/devices` (`fcm_token`, `platform`: android|ios).",
       ].join("\n"),
     },
     servers: [{ url: origin, description: "API origin" }],
@@ -47,6 +56,7 @@ export function buildPublicV1OpenApi(env: AppEnv) {
     tags: [
       { name: "Platform", description: "Liveness and readiness" },
       { name: "Content", description: "Public meals and workouts — use lang to localize" },
+      ...PUBLIC_REMINDER_TAGS,
     ],
     paths: {
       "/health": {
@@ -253,6 +263,7 @@ export function buildPublicV1OpenApi(env: AppEnv) {
           responses: okCached("Paginated exercises"),
         },
       },
+      ...publicReminderPaths(),
     },
     components: {
       securitySchemes: {
@@ -266,7 +277,14 @@ export function buildPublicV1OpenApi(env: AppEnv) {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "JWT from POST /api/admin/login (data.accessToken). Required unless x-api-key is sent.",
+          description: "Admin JWT from POST /api/admin/login (data.accessToken). For content GETs unless x-api-key is sent. Not valid for reminders.",
+        },
+        FirebaseBearer: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description:
+            "Firebase ID token from the mobile app. Required for /api/v1/workout-reminders and /api/v1/devices.",
         },
       },
       parameters: {

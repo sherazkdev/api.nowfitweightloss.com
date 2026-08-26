@@ -29,6 +29,11 @@ const toggleBodySchema = z.object({
   enabled: z.boolean(),
 });
 
+const adminDocsSecurity: Array<{ [securityLabel: string]: string[] }> = [
+  { BearerAuth: [] },
+  { ApiKeyAuth: [] },
+];
+
 function validationError(reply: FastifyReply, message: string) {
   return reply.status(422).send({
     success: false,
@@ -39,7 +44,14 @@ function validationError(reply: FastifyReply, message: string) {
 export async function registerAdminWorkoutReminderRoutes(app: FastifyInstance) {
   app.get(
     "/api/admin/workout-reminders/summary",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Reminders"],
+        summary: "Workout reminder stats + analytics",
+        security: adminDocsSecurity,
+      },
+    },
     async (request, reply) => {
       const result = await app.cache.adminGetOrSet(
         "workoutReminders",
@@ -63,7 +75,28 @@ export async function registerAdminWorkoutReminderRoutes(app: FastifyInstance) {
 
   app.get(
     "/api/admin/workout-reminders",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Reminders"],
+        summary: "List workout reminders",
+        description: "Paginated admin list. Filter with gender, status, timezone, search.",
+        security: adminDocsSecurity,
+        querystring: {
+          type: "object",
+          additionalProperties: true,
+          properties: {
+            gender: { type: "string", enum: ["male", "female"] },
+            status: { type: "string", enum: ["enabled", "paused"], description: "enabled or paused" },
+            timezone: { type: "string", description: "IANA timezone, e.g. Asia/Karachi" },
+            search: { type: "string", description: "Search uid / reminder fields" },
+            page: { type: "integer", minimum: 1 },
+            limit: { type: "integer", minimum: 1, maximum: 100 },
+            cursor: { type: "integer", minimum: 1 },
+          },
+        },
+      },
+    },
     async (request, reply) => {
       const parsed = listQuerySchema.safeParse(request.query);
       if (!parsed.success) {
@@ -99,7 +132,24 @@ export async function registerAdminWorkoutReminderRoutes(app: FastifyInstance) {
 
   app.patch(
     "/api/admin/workout-reminders/:id/toggle",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Reminders"],
+        summary: "Enable or pause a reminder",
+        security: adminDocsSecurity,
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: { id: { type: "string", description: "Reminder id" } },
+        },
+        body: {
+          type: "object",
+          required: ["enabled"],
+          properties: { enabled: { type: "boolean" } },
+        },
+      },
+    },
     async (request, reply) => {
       const id = Number((request.params as { id: string }).id);
       if (!Number.isInteger(id) || id < 1) {
@@ -128,7 +178,19 @@ export async function registerAdminWorkoutReminderRoutes(app: FastifyInstance) {
 
   app.delete(
     "/api/admin/workout-reminders/:id",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Reminders"],
+        summary: "Delete a workout reminder",
+        security: adminDocsSecurity,
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: { id: { type: "string", description: "Reminder id" } },
+        },
+      },
+    },
     async (request, reply) => {
       const id = Number((request.params as { id: string }).id);
       if (!Number.isInteger(id) || id < 1) {

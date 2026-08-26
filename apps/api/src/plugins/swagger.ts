@@ -13,6 +13,10 @@ const ADMIN_DOCS_PREFIXES = [
   "/api/admin/workout-categories",
   "/api/admin/exercises",
   "/api/admin/media",
+  "/api/admin/workout-reminders",
+  "/api/admin/devices",
+  "/api/admin/fcm",
+  "/api/admin/delivery-logs",
 ];
 
 function isUsefulAdminDocsRoute(url: string) {
@@ -42,6 +46,8 @@ export async function registerSwagger(app: FastifyInstance, env: AppEnv) {
           `**Public content + language dropdown:** ${serverUrl}/docs/public`,
           "On that page: open any GET → Try it out → **lang** dropdown → Execute. Example: `/api/v1/meals?lang=hi`.",
           "",
+          `**Mobile reminders (Firebase):** ${serverUrl}/docs/public — tags **Reminders** and **Devices**.`,
+          "",
           "**Authentication (choose one):**",
           "1. **Bearer JWT** — `POST /api/admin/login` → paste `data.accessToken` in Authorize, or use the login panel above.",
           "2. **x-api-key** — create keys in Admin → **API Keys** (`POST /api/admin/api-keys`, Bearer required). Send header `x-api-key: wl_…`",
@@ -58,6 +64,10 @@ export async function registerSwagger(app: FastifyInstance, env: AppEnv) {
         { name: "Meal Categories", description: "Meal category CRUD" },
         { name: "Workout", description: "Levels, categories, exercises" },
         { name: "Media", description: "Image uploads" },
+        { name: "Reminders", description: "Admin workout reminder list, toggle, delete" },
+        { name: "Devices", description: "Registered FCM devices" },
+        { name: "FCM", description: "Push overview and test notification" },
+        { name: "Delivery logs", description: "Notification delivery history and retry" },
       ],
       components: {
         securitySchemes: {
@@ -74,6 +84,13 @@ export async function registerSwagger(app: FastifyInstance, env: AppEnv) {
             name: "x-api-key",
             description:
               "Long-lived API key (prefix wl_). Create via POST /api/admin/api-keys or Admin → API Keys. Works on most admin routes except key management.",
+          },
+          FirebaseBearer: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT",
+            description:
+              "Firebase ID token for mobile reminder APIs on /docs/public. Not used on these admin routes.",
           },
         },
         schemas: {

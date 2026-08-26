@@ -20,6 +20,14 @@ function pathParams(path: string) {
 }
 
 function defaultQuery(row: EndpointRow) {
+  if (row.auth === "bearer" || row.path.startsWith("/api/v1/workout-reminders") || row.path.startsWith("/api/v1/devices")) {
+    if (row.method === "GET" && row.path === "/api/v1/workout-reminders") return "gender=male";
+    return "";
+  }
+  if (row.method === "GET" && row.path === "/api/admin/workout-reminders") return "page=1&limit=20";
+  if (row.method === "GET" && row.path === "/api/admin/devices") return "page=1&limit=20";
+  if (row.method === "GET" && row.path === "/api/admin/delivery-logs") return "page=1&limit=20&days=30";
+  if (row.method === "GET" && row.path === "/api/admin/delivery-logs/summary") return "days=30";
   if (row.path.startsWith("/api/v1/") && !row.path.includes("openapi") && row.path !== "/api/v1/") {
     return "lang=en";
   }
@@ -27,6 +35,25 @@ function defaultQuery(row: EndpointRow) {
 }
 
 function defaultBody(row: EndpointRow) {
+  if (row.path === "/api/v1/workout-reminders" && (row.method === "POST" || row.method === "PUT")) {
+    return JSON.stringify(
+      { hour: 7, minute: 0, days: [1, 2, 3, 4, 5], enabled: true, gender: "male", timezone: "Asia/Karachi" },
+      null,
+      2,
+    );
+  }
+  if (row.path.endsWith("/toggle") && row.method === "PATCH") {
+    return JSON.stringify({ enabled: true }, null, 2);
+  }
+  if (row.path === "/api/v1/devices" && row.method === "POST") {
+    return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN", platform: "android" }, null, 2);
+  }
+  if (row.path === "/api/v1/devices" && row.method === "DELETE") {
+    return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN" }, null, 2);
+  }
+  if (row.path === "/api/admin/fcm/test-notification") {
+    return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN" }, null, 2);
+  }
   if (row.method === "GET" || row.method === "DELETE") return "";
   if (row.path.includes("login")) {
     return JSON.stringify({ email: "admin@example.com", password: "your-password" }, null, 2);
@@ -41,10 +68,16 @@ function defaultBody(row: EndpointRow) {
       2,
     );
   }
-  if (row.method === "POST" || row.method === "PUT") {
+  if (row.method === "POST" || row.method === "PUT" || row.method === "PATCH") {
     return "{\n  \n}";
   }
   return "";
+}
+
+function usesJsonBody(row: EndpointRow) {
+  if (row.method === "GET") return false;
+  if (row.method === "DELETE") return row.path === "/api/v1/devices";
+  return true;
 }
 
 export default function EndpointsPage() {
@@ -63,7 +96,8 @@ export default function EndpointsPage() {
   const needle = filter.trim().toLowerCase();
   const params = pathParams(selected.path);
   const needsCredential = endpointRequiresCredential(selected);
-  const hasCredential = Boolean(apiKey.trim() || bearer.trim());
+  const firebaseOnly = selected.auth === "bearer";
+  const hasCredential = firebaseOnly ? Boolean(bearer.trim()) : Boolean(apiKey.trim() || bearer.trim());
 
   const resolvedPath = useMemo(() => {
     let path = selected.path;
@@ -84,7 +118,11 @@ export default function EndpointsPage() {
 
   async function send() {
     if (needsCredential && !hasCredential) {
-      setAuthError("Paste an x-api-key or Bearer token first. The API will not return data without one.");
+      setAuthError(
+        firebaseOnly
+          ? "Paste a Firebase ID token in Bearer first."
+          : "Paste an x-api-key or Bearer token first. The API will not return data without one.",
+      );
       setStatus(401);
       setResponseText(
         JSON.stringify(
@@ -115,7 +153,7 @@ export default function EndpointsPage() {
     if (apiKey.trim()) headers["x-api-key"] = apiKey.trim();
     if (bearer.trim()) headers.Authorization = `Bearer ${bearer.trim()}`;
     const init: RequestInit = { method: selected.method, headers };
-    if (selected.method !== "GET" && selected.method !== "DELETE" && body.trim()) {
+    if (usesJsonBody(selected) && body.trim()) {
       headers["Content-Type"] = "application/json";
       init.body = body;
     }
@@ -142,18 +180,22 @@ export default function EndpointsPage() {
         <div className="mb-6">
           <h1 className="text-[18px] font-semibold leading-7 tracking-tight">API playground</h1>
           <p className="mt-1 max-w-3xl text-[14px] leading-5 text-[var(--text-muted)]">
-            Content APIs need an <strong>x-api-key</strong> or Bearer token — without one the API returns 401 and no
-            data. Public GETs also need <code className="rounded bg-[var(--surface-muted)] px-1">lang</code>. Secrets
-            stay in this tab only.
+            Content APIs need an <strong>x-api-key</strong> or admin Bearer — without one the API returns 401.
+            Mobile reminders need a <strong>Firebase ID token</strong> in Bearer (not x-api-key). Content GETs also
+            need <code className="rounded bg-[var(--surface-muted)] px-1">lang</code>. Secrets stay in this tab only.
           </p>
         </div>
 
         <div className="mb-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
           <FormField
             label="x-api-key"
-            required={needsCredential}
+            required={needsCredential && !firebaseOnly}
             error={authError && !hasCredential ? authError : undefined}
-            hint="From Admin → API Keys. Either this or Bearer is enough."
+            hint={
+              firebaseOnly
+                ? "Not used for mobile reminders. Use Firebase Bearer instead."
+                : "From Admin → API Keys. Either this or Bearer is enough."
+            }
           >
             <TextInput
               value={apiKey}
@@ -168,7 +210,11 @@ export default function EndpointsPage() {
           <FormField
             label="Bearer token"
             required={needsCredential}
-            hint="From POST /api/admin/login. Either this or x-api-key is enough."
+            hint={
+              firebaseOnly
+                ? "Firebase ID token from the mobile app. Required for reminders/devices."
+                : "From POST /api/admin/login. Either this or x-api-key is enough."
+            }
           >
             <TextInput
               value={bearer}
@@ -176,7 +222,7 @@ export default function EndpointsPage() {
                 setBearer(event.target.value);
                 setAuthError("");
               }}
-              placeholder="JWT from /api/admin/login"
+              placeholder={firebaseOnly ? "Firebase ID token" : "JWT from /api/admin/login"}
               autoComplete="off"
             />
           </FormField>
@@ -257,8 +303,19 @@ export default function EndpointsPage() {
                 ))}
               </div>
             ) : null}
-            <FormField label="Query string" hint="Example: lang=hi&page=1&limit=20">
-              <TextInput value={query} onChange={(event) => setQuery(event.target.value)} placeholder="lang=en" />
+            <FormField
+              label="Query string"
+              hint={
+                firebaseOnly
+                  ? "Example: gender=male"
+                  : "Example: lang=hi&page=1&limit=20"
+              }
+            >
+              <TextInput
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={firebaseOnly ? "gender=male" : "lang=en"}
+              />
             </FormField>
             {selected.auth === "public" ? (
               <FormField label="lang" className="mt-3">
@@ -278,7 +335,7 @@ export default function EndpointsPage() {
                 </Select>
               </FormField>
             ) : null}
-            {selected.method !== "GET" && selected.method !== "DELETE" ? (
+            {usesJsonBody(selected) ? (
               <FormField label="JSON body" className="mt-3">
                 <Textarea value={body} onChange={(event) => setBody(event.target.value)} className="min-h-[140px] font-mono text-[12px]" />
               </FormField>

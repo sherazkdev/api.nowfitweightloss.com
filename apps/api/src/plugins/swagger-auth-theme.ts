@@ -87,6 +87,11 @@ export const SWAGGER_AUTH_THEME_JS = `
         name: 'BearerAuth',
         schema: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
         value: token
+      },
+      FirebaseBearer: {
+        name: 'FirebaseBearer',
+        schema: { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
+        value: token
       }
     });
   }
@@ -109,8 +114,8 @@ export const SWAGGER_AUTH_THEME_JS = `
     panel.id = 'wl-auth-panel';
     panel.innerHTML = [
       '<h3>Authentication</h3>',
-      '<p>Use <strong>Bearer JWT</strong> (from login) or <strong>x-api-key</strong> (from Admin → API Keys). Paste only the token value — not the full JSON response.</p>',
-      '<p>To GET localized public meals/exercises, open <a href="/docs/public"><strong>Public Swagger</strong></a> and use the <strong>lang</strong> dropdown — it is not on this admin page.</p>',
+      '<p>Use <strong>Bearer JWT</strong> (admin login) or <strong>x-api-key</strong> (from Admin → API Keys). For mobile reminders on <a href="/docs/public">Public Swagger</a>, paste a <strong>Firebase ID token</strong> into Bearer.</p>',
+      '<p>Content GETs: <a href="/docs/public"><strong>Public Swagger</strong></a> + <strong>lang</strong> dropdown. Reminders: tags <strong>Reminders</strong> / <strong>Devices</strong> with query/body params.</p>',
       '<div class="wl-row">',
       '  <label>Email<input type="email" id="wl-email" placeholder="admin@example.com" /></label>',
       '  <label>Password<input type="password" id="wl-password" placeholder="••••••••" /></label>',
@@ -191,7 +196,7 @@ export const SWAGGER_AUTH_THEME_JS = `
     });
 
     document.getElementById('wl-clear-btn').addEventListener('click', function () {
-      ui.authActions.logout(['BearerAuth', 'ApiKeyAuth']);
+      ui.authActions.logout(['BearerAuth', 'FirebaseBearer', 'ApiKeyAuth']);
       setMsg(msg, 'Authorization cleared.', true);
     });
   });

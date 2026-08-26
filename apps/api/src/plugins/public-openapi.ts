@@ -31,7 +31,7 @@ export async function registerPublicOpenApi(app: FastifyInstance, env: AppEnv) {
           persistAuthorization: true,
           filter: true,
           displayRequestDuration: true,
-          supportedSubmitMethods: ["get"],
+          supportedSubmitMethods: ["get", "post", "put", "patch", "delete"],
         },
         theme: {
           title: "WeightLoss Public API",

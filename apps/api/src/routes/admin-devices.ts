@@ -27,10 +27,22 @@ function validationError(reply: FastifyReply, message: string) {
   });
 }
 
+const adminDocsSecurity: Array<{ [securityLabel: string]: string[] }> = [
+  { BearerAuth: [] },
+  { ApiKeyAuth: [] },
+];
+
 export async function registerAdminDeviceRoutes(app: FastifyInstance) {
   app.get(
     "/api/admin/devices/summary",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Devices"],
+        summary: "Device stats + analytics",
+        security: adminDocsSecurity,
+      },
+    },
     async (request, reply) => {
       const result = await app.cache.adminGetOrSet(
         "userDevices",
@@ -54,7 +66,26 @@ export async function registerAdminDeviceRoutes(app: FastifyInstance) {
 
   app.get(
     "/api/admin/devices",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Devices"],
+        summary: "List registered FCM devices",
+        security: adminDocsSecurity,
+        querystring: {
+          type: "object",
+          additionalProperties: true,
+          properties: {
+            platform: { type: "string", enum: ["android", "ios"] },
+            status: { type: "string", enum: ["active", "stale"] },
+            search: { type: "string" },
+            page: { type: "integer", minimum: 1 },
+            limit: { type: "integer", minimum: 1, maximum: 100 },
+            cursor: { type: "integer", minimum: 1 },
+          },
+        },
+      },
+    },
     async (request, reply) => {
       const parsed = listQuerySchema.safeParse(request.query);
       if (!parsed.success) {
@@ -90,7 +121,19 @@ export async function registerAdminDeviceRoutes(app: FastifyInstance) {
 
   app.delete(
     "/api/admin/devices/:id",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Devices"],
+        summary: "Delete a registered device",
+        security: adminDocsSecurity,
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: { id: { type: "string", description: "Device id" } },
+        },
+      },
+    },
     async (request, reply) => {
       const id = Number((request.params as { id: string }).id);
       if (!Number.isInteger(id) || id < 1) {

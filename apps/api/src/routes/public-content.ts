@@ -109,6 +109,13 @@ export const PUBLIC_ENDPOINTS = [
   { method: "GET", path: "/workout-categories/:categoryId/levels/:levelId/exercises", description: "Exercises for category + level" },
   { method: "GET", path: "/exercises", description: "List exercises with filters and pagination" },
   { method: "GET", path: "/exercises/:id", description: "Exercise detail" },
+  { method: "GET", path: "/workout-reminders", description: "List reminders (Firebase Bearer, query gender=male|female)" },
+  { method: "POST", path: "/workout-reminders", description: "Create reminder (hour, minute, days, gender, timezone)" },
+  { method: "PUT", path: "/workout-reminders/:id", description: "Update reminder" },
+  { method: "PATCH", path: "/workout-reminders/:id/toggle", description: "Enable/disable reminder" },
+  { method: "DELETE", path: "/workout-reminders/:id", description: "Delete reminder" },
+  { method: "POST", path: "/devices", description: "Register FCM token (fcm_token, platform)" },
+  { method: "DELETE", path: "/devices", description: "Unregister FCM token (body fcm_token)" },
 ] as const;
 
 export async function registerPublicContentRoutes(

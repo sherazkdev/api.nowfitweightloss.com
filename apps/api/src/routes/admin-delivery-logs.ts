@@ -37,10 +37,29 @@ function validationError(reply: FastifyReply, message: string) {
   });
 }
 
+const adminDocsSecurity: Array<{ [securityLabel: string]: string[] }> = [
+  { BearerAuth: [] },
+  { ApiKeyAuth: [] },
+];
+
 export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
   app.get(
     "/api/admin/delivery-logs/summary",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Delivery logs"],
+        summary: "Delivery log stats + analytics",
+        security: adminDocsSecurity,
+        querystring: {
+          type: "object",
+          additionalProperties: true,
+          properties: {
+            days: { type: "integer", minimum: 1, maximum: 90, description: "Lookback window (default 30)" },
+          },
+        },
+      },
+    },
     async (request, reply) => {
       const parsed = summaryQuerySchema.safeParse(request.query);
       if (!parsed.success) {
@@ -70,7 +89,27 @@ export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
 
   app.get(
     "/api/admin/delivery-logs",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Delivery logs"],
+        summary: "List notification delivery logs",
+        security: adminDocsSecurity,
+        querystring: {
+          type: "object",
+          additionalProperties: true,
+          properties: {
+            status: { type: "string", enum: ["delivered", "failed", "partial", "skipped"] },
+            platform: { type: "string", enum: ["android", "ios"] },
+            search: { type: "string" },
+            days: { type: "integer", minimum: 1, maximum: 90 },
+            page: { type: "integer", minimum: 1 },
+            limit: { type: "integer", minimum: 1, maximum: 100 },
+            cursor: { type: "integer", minimum: 1 },
+          },
+        },
+      },
+    },
     async (request, reply) => {
       const parsed = listQuerySchema.safeParse(request.query);
       if (!parsed.success) {
@@ -96,7 +135,19 @@ export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
 
   app.post(
     "/api/admin/delivery-logs/:id/retry",
-    { preHandler: requireAdminAuth },
+    {
+      preHandler: requireAdminAuth,
+      schema: {
+        tags: ["Delivery logs"],
+        summary: "Retry a failed reminder push",
+        security: adminDocsSecurity,
+        params: {
+          type: "object",
+          required: ["id"],
+          properties: { id: { type: "string", description: "Delivery log id" } },
+        },
+      },
+    },
     async (request, reply) => {
       const id = Number((request.params as { id: string }).id);
       if (!Number.isInteger(id) || id < 1) {
