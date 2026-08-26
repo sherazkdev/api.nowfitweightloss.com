@@ -12,6 +12,9 @@ export const COLLECTIONS = {
   dataJobs: "dataJobs",
   adminAuditLogs: "adminAuditLogs",
   apiKeys: "apiKeys",
+  workoutReminders: "workoutReminders",
+  userDevices: "userDevices",
+  notificationDeliveries: "notificationDeliveries",
 } as const;
 
 export type CollectionName = (typeof COLLECTIONS)[keyof typeof COLLECTIONS];
@@ -253,4 +256,89 @@ export const INDEX_DEFINITIONS: IndexDefinition[] = [
     unique: true,
   },
   { collection: COLLECTIONS.apiKeys, name: "apiKeys_admin_active", keys: { adminId: 1, isActive: 1 } },
+
+  // workout reminders
+  {
+    collection: COLLECTIONS.workoutReminders,
+    name: "workoutReminders_id_unique",
+    keys: { id: 1 },
+    unique: true,
+  },
+  {
+    collection: COLLECTIONS.workoutReminders,
+    name: "workoutReminders_uid_gender",
+    keys: { firebaseUid: 1, gender: 1, id: 1 },
+  },
+  {
+    collection: COLLECTIONS.workoutReminders,
+    name: "workoutReminders_enabled",
+    keys: { enabled: 1, id: 1 },
+  },
+  {
+    collection: COLLECTIONS.workoutReminders,
+    name: "workoutReminders_admin_filters",
+    keys: { gender: 1, enabled: 1, timezone: 1, id: -1 },
+  },
+  {
+    collection: COLLECTIONS.workoutReminders,
+    name: "workoutReminders_timezone_sort",
+    keys: { timezone: 1, id: -1 },
+  },
+
+  // user devices
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_id_unique",
+    keys: { id: 1 },
+    unique: true,
+  },
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_uid_token_unique",
+    keys: { firebaseUid: 1, fcmToken: 1 },
+    unique: true,
+  },
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_uid_lastSeen",
+    keys: { firebaseUid: 1, lastSeenAt: -1 },
+  },
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_admin_list",
+    keys: { lastSeenAt: -1, id: -1 },
+  },
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_platform_lastSeen",
+    keys: { platform: 1, lastSeenAt: -1, id: -1 },
+  },
+  {
+    collection: COLLECTIONS.userDevices,
+    name: "userDevices_createdAt",
+    keys: { createdAt: -1 },
+  },
+
+  // notification delivery logs
+  {
+    collection: COLLECTIONS.notificationDeliveries,
+    name: "notificationDeliveries_id_unique",
+    keys: { id: 1 },
+    unique: true,
+  },
+  {
+    collection: COLLECTIONS.notificationDeliveries,
+    name: "notificationDeliveries_createdAt",
+    keys: { createdAt: -1 },
+  },
+  {
+    collection: COLLECTIONS.notificationDeliveries,
+    name: "notificationDeliveries_status_createdAt",
+    keys: { status: 1, createdAt: -1 },
+  },
+  {
+    collection: COLLECTIONS.notificationDeliveries,
+    name: "notificationDeliveries_uid_createdAt",
+    keys: { firebaseUid: 1, createdAt: -1 },
+  },
 ];

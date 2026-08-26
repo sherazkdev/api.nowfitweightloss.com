@@ -50,9 +50,15 @@ export async function processImportCsvJob(
     let updated = 0;
     let failed = skipped;
 
+    const redis = await connectRedis(env);
+    const cache = createCacheService(redis.cache, env);
+    const bumpCache = () => cache.bumpVersions(cacheResourcesForImport(payload.resource));
+
     for (let offset = 0; offset < valid.length; offset += batchSize) {
       const batch = valid.slice(offset, offset + batchSize);
-      const result = await importRawRecords(db, payload.resource, batch);
+      const result = await importRawRecords(db, payload.resource, batch, {
+        onLocalizeComplete: bumpCache,
+      });
       inserted += result.inserted;
       updated += result.updated;
       failed += result.failed;
@@ -68,9 +74,7 @@ export async function processImportCsvJob(
       await job.updateProgress(progress);
     }
 
-    const redis = await connectRedis(env);
-    const cache = createCacheService(redis.cache, env);
-    await cache.bumpVersions(cacheResourcesForImport(payload.resource));
+    await bumpCache();
 
     await markDataJobCompleted(db, payload.jobId, {
       processed: valid.length + skipped,

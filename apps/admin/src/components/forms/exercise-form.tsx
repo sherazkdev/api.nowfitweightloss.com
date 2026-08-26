@@ -19,6 +19,7 @@ import { IconButton, SecondaryButton } from "@/components/ui/buttons";
 import { Icon } from "@/components/ui/icon";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { ImageUpload } from "@/components/ui/image-upload";
+import { MediaFileUpload } from "@/components/ui/media-file-upload";
 import { FormPage, slugFromName } from "@/components/forms/form-page";
 import { ApiError, apiUpload } from "@/lib/api-client";
 import { fetchWorkoutCategoriesAdmin } from "@/lib/workout-categories-api";
@@ -75,7 +76,9 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
   const [active, setActive] = useState(initial?.active ?? true);
   const [image, setImage] = useState<string | null>(initial?.image ?? null);
   const [animation, setAnimation] = useState<string | null>(initial?.animation ?? null);
-  const [videoUrl, setVideoUrl] = useState(initial?.videoUrl ?? "");
+  const [animationKey, setAnimationKey] = useState<string | null>(initial?.animationKey ?? null);
+  const [videoUrl, setVideoUrl] = useState<string | null>(initial?.videoUrl ? initial.videoUrl : null);
+  const [videoKey, setVideoKey] = useState<string | null>(initial?.videoKey ?? null);
   const [metrics, setMetrics] = useState({
     durationMin: String(initial?.durationMin ?? 0),
     durationMax: String(initial?.durationMax ?? 0),
@@ -104,8 +107,10 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadingAnimation, setUploadingAnimation] = useState(false);
   const [imageError, setImageError] = useState("");
+  const [videoError, setVideoError] = useState("");
   const [animationError, setAnimationError] = useState("");
   const [error, setError] = useState("");
 
@@ -144,8 +149,11 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
     });
   };
 
-  async function uploadMedia(file: File, folder: string) {
-    return apiUpload<{ url: string }>("/api/admin/media/upload", file, { folder });
+  async function uploadMedia(file: File, folder: string, mediaType: "image" | "video" | "lottie") {
+    return apiUpload<{ url: string; key: string }>("/api/admin/media/upload", file, {
+      folder,
+      mediaType,
+    });
   }
 
   async function handleSubmit() {
@@ -163,7 +171,9 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
       active,
       image,
       animation,
+      animationKey,
       videoUrl,
+      videoKey,
       durationMin: metrics.durationMin,
       durationMax: metrics.durationMax,
       caloriesMin: metrics.caloriesMin,
@@ -347,7 +357,7 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
                 setUploadingImage(true);
                 setImageError("");
                 try {
-                  const result = await uploadMedia(file, "exercises");
+                  const result = await uploadMedia(file, "exercises", "image");
                   setImage(result.url);
                 } catch (err) {
                   setImageError(err instanceof ApiError ? err.message : "Image upload failed");
@@ -358,21 +368,26 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
             }}
           />
         </FormField>
-        <FormField label="Animation">
-          <ImageUpload
+        <FormField label="Lottie Animation">
+          <MediaFileUpload
+            variant="lottie"
             value={animation}
             uploading={uploadingAnimation}
             error={animationError}
-            onUrlChange={setAnimation}
+            onUrlChange={(url) => {
+              setAnimation(url);
+              if (!url) setAnimationKey(null);
+            }}
             onFileSelect={(file) => {
               void (async () => {
                 setUploadingAnimation(true);
                 setAnimationError("");
                 try {
-                  const result = await uploadMedia(file, "exercises");
+                  const result = await uploadMedia(file, "exercises", "lottie");
                   setAnimation(result.url);
+                  setAnimationKey(result.key);
                 } catch (err) {
-                  setAnimationError(err instanceof ApiError ? err.message : "Animation upload failed");
+                  setAnimationError(err instanceof ApiError ? err.message : "Lottie upload failed");
                 } finally {
                   setUploadingAnimation(false);
                 }
@@ -380,8 +395,32 @@ export function ExerciseForm({ mode, initial }: { mode: "create" | "edit"; initi
             }}
           />
         </FormField>
-        <FormField label="Video URL">
-          <TextInput value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} placeholder="https://" />
+        <FormField label="Video">
+          <MediaFileUpload
+            variant="video"
+            value={videoUrl}
+            uploading={uploadingVideo}
+            error={videoError}
+            onUrlChange={(url) => {
+              setVideoUrl(url);
+              if (!url) setVideoKey(null);
+            }}
+            onFileSelect={(file) => {
+              void (async () => {
+                setUploadingVideo(true);
+                setVideoError("");
+                try {
+                  const result = await uploadMedia(file, "exercises", "video");
+                  setVideoUrl(result.url);
+                  setVideoKey(result.key);
+                } catch (err) {
+                  setVideoError(err instanceof ApiError ? err.message : "Video upload failed");
+                } finally {
+                  setUploadingVideo(false);
+                }
+              })();
+            }}
+          />
         </FormField>
       </FormSection>
 

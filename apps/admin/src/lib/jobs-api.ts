@@ -82,7 +82,7 @@ export async function pollJobUntilDone(
   onProgress?: (job: DataJobApi) => void,
 ): Promise<DataJobApi> {
   const started = Date.now();
-  while (Date.now() - started < 90_000) {
+  while (Date.now() - started < 180_000) {
     const job = await fetchJob(jobId);
     onProgress?.(job);
     if (isJobFinished(job)) {

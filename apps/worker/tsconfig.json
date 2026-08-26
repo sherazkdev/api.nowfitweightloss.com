@@ -5,5 +5,13 @@
     "outDir": "dist"
   },
   "include": ["src/**/*.ts"],
-  "references": [{ "path": "../../packages/config" }, { "path": "../../packages/logger" }]
+  "references": [
+    { "path": "../../packages/config" },
+    { "path": "../../packages/logger" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/firebase" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/queue" },
+    { "path": "../../packages/storage" }
+  ]
 }

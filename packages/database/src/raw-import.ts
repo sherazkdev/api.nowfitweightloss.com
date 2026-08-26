@@ -54,6 +54,10 @@ export type RawImportResult = {
   errors: RawImportError[];
 };
 
+export type ImportRawRecordsOptions = {
+  onLocalizeComplete?: () => Promise<void>;
+};
+
 type ResourceConfig = {
   collection: CollectionName;
   counter: import("@weightloss/contracts").CounterName;
@@ -130,6 +134,31 @@ function createdAtFor(existing: ExistingImport, input: Record<string, unknown>, 
   return input.createdAt ? new Date(String(input.createdAt)) : now;
 }
 
+const LOCALIZE_CONCURRENCY = 4;
+
+function enqueueLocalizations(
+  tasks: Array<() => Promise<void>>,
+  onComplete?: () => Promise<void>,
+) {
+  if (tasks.length === 0) {
+    if (onComplete) void onComplete();
+    return;
+  }
+
+  void (async () => {
+    let next = 0;
+    const workers = Array.from({ length: Math.min(LOCALIZE_CONCURRENCY, tasks.length) }, async () => {
+      while (next < tasks.length) {
+        const current = next;
+        next += 1;
+        await tasks[current]!();
+      }
+    });
+    await Promise.all(workers);
+    await onComplete?.();
+  })();
+}
+
 function namedTranslationsFor(
   name: string,
   description: string | null,
@@ -187,6 +216,7 @@ export async function importRawRecords(
   db: Db,
   resource: RawImportResource,
   records: unknown[],
+  options?: ImportRawRecordsOptions,
 ): Promise<RawImportResult> {
   const config = RESOURCE_CONFIG[resource];
   const collection = db.collection(config.collection);
@@ -200,6 +230,7 @@ export async function importRawRecords(
   };
 
   let maxId = 0;
+  const localizeTasks: Array<() => Promise<void>> = [];
 
   for (let index = 0; index < records.length; index += 1) {
     const input = asObject(records[index]);
@@ -243,7 +274,14 @@ export async function importRawRecords(
           };
           doc = normalized;
           localizeImported = () =>
-            persistNamedImportLocalizations(db, config.collection, id, { name, description }, provided);
+            persistNamedImportLocalizations(
+              db,
+              config.collection,
+              id,
+              { name, description },
+              provided,
+              existing?.translations as LocaleMap<NamedCopy> | undefined,
+            );
           break;
         }
         case "workout-levels": {
@@ -269,7 +307,14 @@ export async function importRawRecords(
           };
           doc = normalized;
           localizeImported = () =>
-            persistNamedImportLocalizations(db, config.collection, id, { name, description }, provided);
+            persistNamedImportLocalizations(
+              db,
+              config.collection,
+              id,
+              { name, description },
+              provided,
+              existing?.translations as LocaleMap<NamedCopy> | undefined,
+            );
           break;
         }
         case "workout-categories": {
@@ -300,7 +345,14 @@ export async function importRawRecords(
           };
           doc = normalized;
           localizeImported = () =>
-            persistNamedImportLocalizations(db, config.collection, id, { name, description }, provided);
+            persistNamedImportLocalizations(
+              db,
+              config.collection,
+              id,
+              { name, description },
+              provided,
+              existing?.translations as LocaleMap<NamedCopy> | undefined,
+            );
           break;
         }
         case "meals": {
@@ -376,7 +428,14 @@ export async function importRawRecords(
           };
           doc = normalized;
           localizeImported = () =>
-            persistMealImportLocalizations(db, config.collection, id, mealCopy, providedMeal);
+            persistMealImportLocalizations(
+              db,
+              config.collection,
+              id,
+              mealCopy,
+              providedMeal,
+              existing?.translations as LocaleMap<MealCopy> | undefined,
+            );
           break;
         }
         case "exercises": {
@@ -458,7 +517,14 @@ export async function importRawRecords(
           };
           doc = normalized;
           localizeImported = () =>
-            persistExerciseImportLocalizations(db, config.collection, id, exerciseCopy, providedExercise);
+            persistExerciseImportLocalizations(
+              db,
+              config.collection,
+              id,
+              exerciseCopy,
+              providedExercise,
+              existing?.translations as LocaleMap<ExerciseCopy> | undefined,
+            );
           break;
         }
         default:
@@ -476,7 +542,7 @@ export async function importRawRecords(
       }
 
       if (localizeImported) {
-        await localizeImported();
+        localizeTasks.push(localizeImported);
       }
     } catch (error) {
       result.failed += 1;
@@ -490,6 +556,8 @@ export async function importRawRecords(
   if (maxId > 0) {
     await setSequenceFloor(db, config.counter, maxId);
   }
+
+  enqueueLocalizations(localizeTasks, options?.onLocalizeComplete);
 
   return result;
 }

@@ -136,7 +136,9 @@ export type Exercise = {
   fullDescription: string;
   image: string | null;
   animation: string | null;
-  videoUrl: string;
+  animationKey: string | null;
+  videoUrl: string | null;
+  videoKey: string | null;
   levelIds: string[];
   categoryIds: string[];
   difficulty: Difficulty;

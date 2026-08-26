@@ -28,7 +28,7 @@ export class ApiError extends Error {
 
 type RequestOptions = {
   auth?: boolean;
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
 };
 
@@ -194,6 +194,14 @@ export async function apiPut<T>(
 
 export async function apiDelete<T>(path: string, options?: { auth?: boolean }): Promise<T> {
   return apiRequest<T>(path, { ...options, method: "DELETE" });
+}
+
+export async function apiPatch<T>(
+  path: string,
+  body: unknown,
+  options?: { auth?: boolean },
+): Promise<T> {
+  return apiRequest<T>(path, { ...options, method: "PATCH", body });
 }
 
 export async function apiUpload<T>(

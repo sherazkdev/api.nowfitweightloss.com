@@ -1,15 +1,28 @@
 # Dependencies
 node_modules/
 **/node_modules/
+.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Build outputs
+# Build outputs (admin .next alone is ~700MB+)
 .next/
 **/.next/
 dist/
 **/dist/
+build/
+**/build/
 out/
 **/.turbo/
 *.tsbuildinfo
+
+# Next.js / Vercel
+.vercel/
+**/.vercel/
 
 # Environment (keep templates only)
 .env
@@ -18,11 +31,22 @@ out/
 !.env.production.example
 !.env.docker.example
 
+# Secrets / credentials — never push
+secrets/
+**/*serviceAccount*.json
+**/*firebase-adminsdk*.json
+*.pem
+*.p12
+*.key
+
 # Runtime uploaded media — NOT import samples (apps/admin/public/samples stays tracked)
 public/uploads/**
 !public/uploads/.gitkeep
 **/uploads/**
 !**/uploads/.gitkeep
+
+# Local scratch / screenshots (not app source)
+reminder/
 
 # Logs & debug
 *.log
@@ -30,14 +54,21 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.eslintcache
+.cache/
+**/.cache/
 
 # Test / coverage
 coverage/
 **/.nyc_output/
+playwright-report/
+test-results/
 
 # OS / editor
 .DS_Store
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 .cursor/
 .vscode/
 .idea/

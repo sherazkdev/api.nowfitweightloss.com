@@ -129,7 +129,7 @@ async function googleTranslate(text: string, tl: string): Promise<string> {
   url.searchParams.set("dt", "t");
   url.searchParams.set("q", text);
 
-  const response = await fetch(url, { signal: AbortSignal.timeout(4000) });
+  const response = await fetch(url, { signal: AbortSignal.timeout(8000) });
   if (!response.ok) throw new Error(`google_http_${response.status}`);
   const data = (await response.json()) as unknown;
   if (!Array.isArray(data) || !Array.isArray(data[0])) throw new Error("google_shape");
@@ -232,10 +232,16 @@ async function dictionaryFor(copy: object, locale: Locale): Promise<Map<string, 
   return map;
 }
 
-async function localizeCopy<T extends object>(english: T): Promise<LocaleMap<T>> {
-  const translations: LocaleMap<T> = { [DEFAULT_LOCALE]: english };
+async function localizeCopy<T extends object>(
+  english: T,
+  existing?: LocaleMap<T>,
+): Promise<LocaleMap<T>> {
+  const translations: LocaleMap<T> = { ...existing, [DEFAULT_LOCALE]: english };
+  const missing = TARGET_LOCALES.filter((locale) => !existing?.[locale]);
+  if (missing.length === 0) return translations;
+
   const results = await Promise.all(
-    TARGET_LOCALES.map(async (locale) => {
+    missing.map(async (locale) => {
       const map = await dictionaryFor(english, locale);
       return [locale, applyMap(english, map)] as const;
     }),
@@ -246,17 +252,29 @@ async function localizeCopy<T extends object>(english: T): Promise<LocaleMap<T>>
   return translations;
 }
 
-export async function localizeNamedCopy(copy: NamedCopy): Promise<LocaleMap<NamedCopy>> {
-  return localizeCopy({
-    name: copy.name?.trim() ?? "",
-    description: copy.description?.trim() ? copy.description : null,
-  });
+export async function localizeNamedCopy(
+  copy: NamedCopy,
+  existing?: LocaleMap<NamedCopy>,
+): Promise<LocaleMap<NamedCopy>> {
+  return localizeCopy(
+    {
+      name: copy.name?.trim() ?? "",
+      description: copy.description?.trim() ? copy.description : null,
+    },
+    existing,
+  );
 }
 
-export async function localizeMealCopy(copy: MealCopy): Promise<LocaleMap<MealCopy>> {
-  return localizeCopy(copy);
+export async function localizeMealCopy(
+  copy: MealCopy,
+  existing?: LocaleMap<MealCopy>,
+): Promise<LocaleMap<MealCopy>> {
+  return localizeCopy(copy, existing);
 }
 
-export async function localizeExerciseCopy(copy: ExerciseCopy): Promise<LocaleMap<ExerciseCopy>> {
-  return localizeCopy(copy);
+export async function localizeExerciseCopy(
+  copy: ExerciseCopy,
+  existing?: LocaleMap<ExerciseCopy>,
+): Promise<LocaleMap<ExerciseCopy>> {
+  return localizeCopy(copy, existing);
 }

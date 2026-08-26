@@ -90,6 +90,9 @@ export const envSchema = z.object({
   CACHE_DETAIL_TTL_SECONDS: positiveInt(600),
   CACHE_LIST_TTL_SECONDS: positiveInt(300),
   CACHE_DASHBOARD_TTL_SECONDS: positiveInt(60),
+  CACHE_ADMIN_NOTIFICATIONS_TTL_SECONDS: positiveInt(30),
+  CACHE_ADMIN_SUMMARY_TTL_SECONDS: positiveInt(90),
+  NOTIFICATION_SNAPSHOT_REFRESH_MS: positiveInt(60000),
   CACHE_NEGATIVE_TTL_SECONDS: positiveInt(30),
   CACHE_STAMPEDE_LOCK_MS: positiveInt(5000),
 
@@ -139,6 +142,13 @@ export const envSchema = z.object({
   S3_ACCESS_KEY_ID: z.string().optional().default(""),
   S3_SECRET_ACCESS_KEY: z.string().optional().default(""),
   S3_PUBLIC_BASE_URL: z.string().optional().default(""),
+
+  FIREBASE_PROJECT_ID: z.string().optional().default(""),
+  FIREBASE_CLIENT_EMAIL: z.string().optional().default(""),
+  FIREBASE_PRIVATE_KEY: z.string().optional().default(""),
+
+  WORKOUT_REMINDERS_CRON_ENABLED: boolFromEnv.default(true),
+  WORKOUT_REMINDERS_CRON_INTERVAL_MS: positiveInt(60000),
 }).superRefine((data, ctx) => {
   if (data.STORAGE_DRIVER === "s3") {
     if (!data.S3_BUCKET?.trim()) {

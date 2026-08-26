@@ -25,6 +25,7 @@ export {
 export {
   extractRawRecords,
   importRawRecords,
+  type ImportRawRecordsOptions,
   type RawImportError,
   type RawImportResource,
   type RawImportResult,
@@ -111,3 +112,81 @@ export {
   type ApiKeyCreateResult,
   type ApiKeyListItem,
 } from "./repositories/api-key.repository.js";
+export {
+  createWorkoutReminder,
+  deleteWorkoutReminder,
+  findWorkoutReminderById,
+  findWorkoutReminderForUser,
+  listEnabledWorkoutReminders,
+  listWorkoutRemindersByUser,
+  markWorkoutReminderSent,
+  setWorkoutReminderEnabled,
+  updateWorkoutReminder,
+  type WorkoutReminderWriteInput,
+} from "./repositories/workout-reminder.repository.js";
+export {
+  deleteUserDeviceByToken,
+  listUserDeviceTokens,
+  upsertUserDevice,
+  type RegisterDeviceInput,
+} from "./repositories/user-device.repository.js";
+export {
+  deleteAdminWorkoutReminder,
+  getAdminWorkoutReminderSummary,
+  listAdminWorkoutReminderItems,
+  listAdminWorkoutReminders,
+  toggleAdminWorkoutReminder,
+  adminWorkoutReminderCacheKey,
+  adminWorkoutReminderSummaryCacheKey,
+  WORKOUT_REMINDER_SUMMARY_SNAPSHOT,
+  type AdminWorkoutReminderAnalytics,
+  type AdminWorkoutReminderFilters,
+  type AdminWorkoutReminderListResult,
+  type AdminWorkoutReminderRow,
+  type AdminWorkoutReminderStats,
+  type AdminWorkoutReminderSummary,
+} from "./repositories/admin-workout-reminders.repository.js";
+export {
+  deleteAdminUserDevice,
+  getAdminDeviceSummary,
+  listAdminUserDeviceItems,
+  listAdminUserDevices,
+  adminDeviceCacheKey,
+  adminDeviceSummaryCacheKey,
+  USER_DEVICES_SUMMARY_SNAPSHOT,
+  type AdminDeviceAnalytics,
+  type AdminDeviceFilters,
+  type AdminDeviceListResult,
+  type AdminDeviceRow,
+  type AdminDeviceStats,
+  type AdminDeviceSummary,
+  type DeviceStatus,
+} from "./repositories/admin-user-devices.repository.js";
+export {
+  getAdminFcmOverview,
+  adminFcmOverviewCacheKey,
+  type FcmActivityItem,
+  type FcmDeliveryChartPoint,
+  type FcmOverviewResult,
+  type FcmOverviewStats,
+  type FcmRecentDeliveryRow,
+  type FcmSystemStatus,
+} from "./repositories/admin-fcm-overview.repository.js";
+export {
+  findNotificationDeliveryById,
+  recordNotificationDelivery,
+  type RecordNotificationDeliveryInput,
+} from "./repositories/notification-delivery.repository.js";
+export {
+  adminDeliveryLogCacheKey,
+  adminDeliveryLogSummaryCacheKey,
+  getAdminDeliveryLogSummary,
+  listAdminDeliveryLogs,
+  type AdminDeliveryLogAnalytics,
+  type AdminDeliveryLogFilters,
+  type AdminDeliveryLogListResult,
+  type AdminDeliveryLogRow,
+  type AdminDeliveryLogStats,
+  type AdminDeliveryLogSummary,
+  type DeliveryLogStatusFilter,
+} from "./repositories/admin-delivery-logs.repository.js";

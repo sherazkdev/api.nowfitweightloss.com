@@ -1,6 +1,7 @@
-import { Worker } from "bullmq";
 import { loadEnvSafe } from "@weightloss/config";
+import { closeRedis, connectRedis } from "@weightloss/cache";
 import { connectMongo } from "@weightloss/database";
+import { initFirebase, isFirebaseConfigured } from "@weightloss/firebase";
 import { createLogger } from "@weightloss/logger";
 import {
   createQueueConnection,
@@ -9,9 +10,12 @@ import {
   QUEUE_SUFFIX,
 } from "@weightloss/queue";
 import { createStorageProvider } from "@weightloss/storage";
+import { Worker } from "bullmq";
 import { processExportCsvJob } from "./processors/export-csv.js";
 import { processImportCsvJob } from "./processors/import-csv.js";
 import { processRawImportJob } from "./processors/raw-import.js";
+import { processWorkoutReminders } from "./processors/workout-reminders.js";
+import { refreshNotificationSnapshots } from "./processors/notification-snapshots.js";
 
 const env = loadEnvSafe();
 const log = createLogger({ name: "weightloss-worker", level: env.LOG_LEVEL });
@@ -22,6 +26,7 @@ async function main() {
   }
 
   await connectMongo(env);
+  const redis = await connectRedis(env);
   const connection = createQueueConnection(env);
   const storage = createStorageProvider(env);
 
@@ -79,6 +84,43 @@ async function main() {
     });
   }
 
+  let reminderTimer: NodeJS.Timeout | undefined;
+  let snapshotTimer: NodeJS.Timeout | undefined;
+
+  if (env.NOTIFICATION_SNAPSHOT_REFRESH_MS > 0) {
+    const snapshotTick = () => {
+      void refreshNotificationSnapshots(env, redis.cache).catch((error) => {
+        log.error({ err: error }, "notification_snapshot_refresh_failed");
+      });
+    };
+    snapshotTick();
+    snapshotTimer = setInterval(snapshotTick, env.NOTIFICATION_SNAPSHOT_REFRESH_MS);
+    log.info(
+      { intervalMs: env.NOTIFICATION_SNAPSHOT_REFRESH_MS },
+      "notification_snapshot_refresh_started",
+    );
+  }
+
+  if (env.WORKOUT_REMINDERS_CRON_ENABLED && isFirebaseConfigured(env)) {
+    initFirebase(env);
+    const tick = () => {
+      void processWorkoutReminders(env).catch((error) => {
+        log.error({ err: error }, "workout_reminder_cron_failed");
+      });
+    };
+    tick();
+    reminderTimer = setInterval(tick, env.WORKOUT_REMINDERS_CRON_INTERVAL_MS);
+    log.info(
+      {
+        intervalMs: env.WORKOUT_REMINDERS_CRON_INTERVAL_MS,
+        projectId: env.FIREBASE_PROJECT_ID,
+      },
+      "workout_reminder_cron_started",
+    );
+  } else {
+    log.warn("workout_reminder_cron_disabled");
+  }
+
   log.info(
     {
       queuePrefix: env.QUEUE_PREFIX,
@@ -91,8 +133,11 @@ async function main() {
 
   const shutdown = async (signal: string) => {
     log.info({ signal }, "worker_shutting_down");
+    if (reminderTimer) clearInterval(reminderTimer);
+    if (snapshotTimer) clearInterval(snapshotTimer);
     await Promise.all([importWorker.close(), exportWorker.close(), rawWorker.close()]);
     await connection.quit();
+    await closeRedis();
     process.exit(0);
   };
 

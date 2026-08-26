@@ -15,7 +15,10 @@ export type CounterName =
   | "admins"
   | "mediaAssets"
   | "dataJobs"
-  | "apiKeys";
+  | "apiKeys"
+  | "workoutReminders"
+  | "userDevices"
+  | "notificationDeliveries";
 
 export type ApiKeyDocument = {
   id: number;
@@ -257,6 +260,50 @@ export type DataJobDocument = {
   startedAt: Date | null;
   completedAt: Date | null;
   updatedAt: Date;
+};
+
+export type ReminderGender = "male" | "female";
+
+export type WorkoutReminderDocument = {
+  id: number;
+  firebaseUid: string;
+  gender: ReminderGender;
+  hour: number;
+  minute: number;
+  days: number[];
+  enabled: boolean;
+  timezone: string;
+  lastSentSlot: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type UserDeviceDocument = {
+  id: number;
+  firebaseUid: string;
+  fcmToken: string;
+  platform: "android" | "ios";
+  lastSeenAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type NotificationDeliveryStatus = "delivered" | "partial" | "failed" | "skipped";
+
+export type NotificationDeliveryDocument = {
+  id: number;
+  firebaseUid: string;
+  reminderId: number;
+  gender: ReminderGender;
+  hour: number;
+  minute: number;
+  tokenCount: number;
+  successCount: number;
+  failureCount: number;
+  status: NotificationDeliveryStatus;
+  slotKey: string;
+  errorMessage: string | null;
+  createdAt: Date;
 };
 
 export type LegacySuccessResponse<T> = {

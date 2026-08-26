@@ -4,7 +4,11 @@ export type CacheResource =
   | "workoutLevels"
   | "workoutCategories"
   | "exercises"
-  | "dashboard";
+  | "dashboard"
+  | "workoutReminders"
+  | "userDevices"
+  | "fcmOverview"
+  | "deliveryLogs";
 
 export const CACHE_VERSION_KEYS: Record<CacheResource, string> = {
   mealCategories: "cachever:mealCategories",
@@ -13,6 +17,10 @@ export const CACHE_VERSION_KEYS: Record<CacheResource, string> = {
   workoutCategories: "cachever:workoutCategories",
   exercises: "cachever:exercises",
   dashboard: "cachever:dashboard",
+  workoutReminders: "cachever:workoutReminders",
+  userDevices: "cachever:userDevices",
+  fcmOverview: "cachever:fcmOverview",
+  deliveryLogs: "cachever:deliveryLogs",
 };
 
 export type RateLimitBucket = "public" | "admin" | "login" | "upload" | "import";

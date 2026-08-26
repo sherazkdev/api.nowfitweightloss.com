@@ -47,6 +47,16 @@ const sections: NavSection[] = [
     ],
   },
   {
+    id: "notifications",
+    label: "Notifications",
+    items: [
+      { href: adminPath("/notifications/fcm-overview"), label: "FCM Overview", icon: "broadcast" },
+      { href: adminPath("/notifications/workout-reminders"), label: "Workout Reminders", icon: "bell" },
+      { href: adminPath("/notifications/devices"), label: "Devices", icon: "person" },
+      { href: adminPath("/notifications/delivery-logs"), label: "Delivery Logs", icon: "history" },
+    ],
+  },
+  {
     id: "data",
     label: "Data Management",
     items: [

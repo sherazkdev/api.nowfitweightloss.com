@@ -16,6 +16,7 @@ export {
   type CacheAsideOptions,
 } from "./cache-aside.js";
 export { CacheService, createCacheService } from "./cache-service.js";
+export { readSnapshot, readSnapshotFresh, writeSnapshot, type SnapshotStoreOptions } from "./snapshot-store.js";
 export {
   buildAdminCacheKey,
   buildPublicCacheKey,

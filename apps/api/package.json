@@ -22,6 +22,7 @@
     "@weightloss/config": "*",
     "@weightloss/contracts": "*",
     "@weightloss/database": "*",
+    "@weightloss/firebase": "*",
     "@weightloss/logger": "*",
     "@weightloss/metrics": "*",
     "@weightloss/queue": "*",

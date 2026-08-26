@@ -152,7 +152,7 @@ function RawUploadView() {
   return (
     <DataUtilityPage
       title="Raw Upload"
-      subtitle={`Import JSON into ${def.label}. English titles are enough — other languages fill in after save.`}
+      subtitle={`Import JSON into ${def.label}. Records save immediately — other languages fill in shortly after.`}
       actions={
         <>
           <SecondaryButton type="button" className="flex-1 sm:flex-none" onClick={clear} disabled={busy}>

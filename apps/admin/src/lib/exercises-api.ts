@@ -82,7 +82,9 @@ export type ExerciseFormState = {
   active: boolean;
   image: string | null;
   animation: string | null;
-  videoUrl: string;
+  animationKey: string | null;
+  videoUrl: string | null;
+  videoKey: string | null;
   durationMin: string;
   durationMax: string;
   caloriesMin: string;
@@ -129,9 +131,11 @@ export function exerciseDocumentToUi(doc: ExerciseDocumentApi): Exercise {
     slug: doc.slug,
     shortDescription: doc.shortDescription ?? "",
     fullDescription: doc.description ?? "",
-    image: doc.image,
-    animation: doc.animationUrl,
-    videoUrl: doc.videoUrl ?? "",
+    image: mediaUrl(doc.image),
+    animation: mediaUrl(doc.animationUrl),
+    animationKey: doc.animationKey,
+    videoUrl: mediaUrl(doc.videoUrl),
+    videoKey: doc.videoKey,
     levelIds: doc.levelIds.map(String),
     categoryIds: doc.categoryIds.map(String),
     difficulty: difficultyFromApi[doc.difficulty],
@@ -184,7 +188,7 @@ export function exerciseFormToApiPayload(
 ) {
   const image = mediaUrl(form.image);
   const animation = mediaUrl(form.animation);
-  const videoUrl = form.videoUrl.trim();
+  const videoUrl = mediaUrl(form.videoUrl);
   const englishCopy = {
     title: form.title.trim(),
     shortDescription: form.shortDescription.trim() || null,
@@ -208,7 +212,9 @@ export function exerciseFormToApiPayload(
     description: form.fullDescription.trim() || null,
     image,
     animationUrl: animation,
-    videoUrl: videoUrl ? videoUrl : null,
+    animationKey: form.animationKey?.trim() ? form.animationKey.trim() : null,
+    videoUrl: videoUrl,
+    videoKey: form.videoKey?.trim() ? form.videoKey.trim() : null,
     difficulty: difficultyToApi[form.difficulty],
     caloriesMin: num(form.caloriesMin),
     caloriesMax: num(form.caloriesMax),

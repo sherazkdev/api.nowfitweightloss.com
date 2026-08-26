@@ -31,6 +31,12 @@ import { registerAdminMediaRoutes } from "./routes/admin-media.js";
 import { registerAdminJobRoutes } from "./routes/admin-jobs.js";
 import { registerAdminSystemRoutes } from "./routes/admin-system.js";
 import { registerPublicOpenApi } from "./plugins/public-openapi.js";
+import { registerWorkoutReminderRoutes } from "./routes/workout-reminders.js";
+import { registerAdminWorkoutReminderRoutes } from "./routes/admin-workout-reminders.js";
+import { registerAdminDeviceRoutes } from "./routes/admin-devices.js";
+import { registerAdminFcmRoutes } from "./routes/admin-fcm.js";
+import { registerAdminDeliveryLogRoutes } from "./routes/admin-delivery-logs.js";
+import { initFirebase, isFirebaseConfigured } from "@weightloss/firebase";
 import { renderApiLandingHtml } from "./views/landing-page.js";
 
 const env = loadEnvSafe();
@@ -194,7 +200,19 @@ async function main() {
     await registerAdminMediaRoutes(app);
     await registerAdminJobRoutes(app);
     await registerAdminSystemRoutes(app);
+    await registerWorkoutReminderRoutes(app);
+    await registerAdminWorkoutReminderRoutes(app);
+    await registerAdminDeviceRoutes(app);
+    await registerAdminFcmRoutes(app);
+    await registerAdminDeliveryLogRoutes(app);
     await registerPublicOpenApi(app, env);
+
+    if (isFirebaseConfigured(env)) {
+      initFirebase(env);
+      log.info({ projectId: env.FIREBASE_PROJECT_ID }, "firebase_initialized");
+    } else {
+      log.warn("firebase_not_configured_workout_reminders_disabled");
+    }
 
     await app.listen({ host: env.API_HOST, port: env.API_PORT });
     log.info({ port: env.API_PORT, host: env.API_HOST }, "api_started");

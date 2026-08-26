@@ -1,5 +1,7 @@
 import {
+  DEFAULT_LOCALE,
   mergeLocaleMaps,
+  SUPPORTED_LOCALES,
   withEnglishExerciseCopy,
   withEnglishMealCopy,
   withEnglishNamedCopy,
@@ -24,15 +26,25 @@ async function writeTranslations(
   );
 }
 
+function hasGeneratedLocales(map?: LocaleMap<unknown>): boolean {
+  return SUPPORTED_LOCALES.every((locale) => {
+    if (locale === DEFAULT_LOCALE) return true;
+    return map?.[locale] != null;
+  });
+}
+
 export async function persistNamedImportLocalizations(
   db: Db,
   collection: CollectionName,
   id: number,
   english: NamedCopy,
   provided?: LocaleMap<NamedCopy>,
+  existing?: LocaleMap<NamedCopy>,
 ) {
   try {
-    const generated = await localizeNamedCopy(english);
+    const already = mergeLocaleMaps(existing, provided);
+    if (hasGeneratedLocales(already)) return;
+    const generated = await localizeNamedCopy(english, already);
     const translations = withEnglishNamedCopy(
       english.name?.trim() ?? "",
       english.description?.trim() ? english.description : null,
@@ -50,9 +62,12 @@ export async function persistMealImportLocalizations(
   id: number,
   english: MealCopy,
   provided?: LocaleMap<MealCopy>,
+  existing?: LocaleMap<MealCopy>,
 ) {
   try {
-    const generated = await localizeMealCopy(english);
+    const already = mergeLocaleMaps(existing, provided);
+    if (hasGeneratedLocales(already)) return;
+    const generated = await localizeMealCopy(english, already);
     const translations = withEnglishMealCopy(english, mergeLocaleMaps(generated, provided));
     await writeTranslations(db, collection, id, translations);
   } catch {
@@ -66,9 +81,12 @@ export async function persistExerciseImportLocalizations(
   id: number,
   english: ExerciseCopy,
   provided?: LocaleMap<ExerciseCopy>,
+  existing?: LocaleMap<ExerciseCopy>,
 ) {
   try {
-    const generated = await localizeExerciseCopy(english);
+    const already = mergeLocaleMaps(existing, provided);
+    if (hasGeneratedLocales(already)) return;
+    const generated = await localizeExerciseCopy(english, already);
     const translations = withEnglishExerciseCopy(english, mergeLocaleMaps(generated, provided));
     await writeTranslations(db, collection, id, translations);
   } catch {

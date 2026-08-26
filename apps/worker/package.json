@@ -13,6 +13,7 @@
     "@weightloss/cache": "*",
     "@weightloss/config": "*",
     "@weightloss/database": "*",
+    "@weightloss/firebase": "*",
     "@weightloss/logger": "*",
     "@weightloss/queue": "*",
     "@weightloss/shared": "*",

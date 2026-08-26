@@ -4,8 +4,9 @@ import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { DataTable } from "@/components/ui/data-table";
 import { ChallengeBadge, DifficultyBadge, GenderBadge, StatusBadge } from "@/components/ui/badges";
-import { IdCell, NameCell } from "@/components/ui/cells";
-import { EmptyState } from "@/components/ui/feedback";
+import { IdCell } from "@/components/ui/cells";
+import { EmptyState, Thumb } from "@/components/ui/feedback";
+import { LottiePreview } from "@/components/ui/lottie-preview";
 import { DataActionBar } from "@/components/data/data-action-bar";
 import { PrimaryLink } from "@/components/ui/buttons";
 import { ApiError } from "@/lib/api-client";
@@ -164,7 +165,25 @@ export default function ExercisesPage() {
           ]}
           columns={[
             { key: "id", header: "ID", render: (row) => <IdCell value={`#${row.id}`} /> },
-            { key: "title", header: "Exercise", render: (row) => <NameCell name={row.title} /> },
+            { key: "title", header: "Exercise", render: (row) => (
+              <span className="inline-flex min-w-0 items-center gap-2">
+                <span className="size-11 shrink-0 overflow-hidden rounded-[8px] border border-[var(--border)] bg-[var(--page-bg)]">
+                  {row.animation ? (
+                    <LottiePreview src={row.animation} />
+                  ) : row.videoUrl ? (
+                    <video src={row.videoUrl} className="size-full object-cover" muted playsInline />
+                  ) : row.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={row.image} alt="" className="size-full object-cover" />
+                  ) : (
+                    <span className="flex size-full items-center justify-center">
+                      <Thumb label={row.title} />
+                    </span>
+                  )}
+                </span>
+                <span className="truncate">{row.title}</span>
+              </span>
+            ) },
             {
               key: "level",
               header: "Level",

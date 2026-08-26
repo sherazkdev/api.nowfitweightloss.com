@@ -32,6 +32,14 @@ export class CacheService {
     return this.env.CACHE_DASHBOARD_TTL_SECONDS;
   }
 
+  notificationsTtl(): number {
+    return this.env.CACHE_ADMIN_NOTIFICATIONS_TTL_SECONDS;
+  }
+
+  summaryTtl(): number {
+    return this.env.CACHE_ADMIN_SUMMARY_TTL_SECONDS;
+  }
+
   negativeTtl(): number {
     return this.env.CACHE_NEGATIVE_TTL_SECONDS;
   }

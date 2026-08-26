@@ -1,0 +1,11 @@
+# Local Next.js output — do not commit (hundreds of MB)
+.next/
+out/
+node_modules/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+.vercel/
+*.log
+.DS_Store
