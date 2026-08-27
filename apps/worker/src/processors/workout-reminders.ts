@@ -9,34 +9,7 @@ import {
 } from "@weightloss/database";
 import { sendWorkoutReminderPush, isFirebaseConfigured, initFirebase } from "@weightloss/firebase";
 import { createLogger } from "@weightloss/logger";
-import { buildReminderSlotKey, getZonedDateParts } from "@weightloss/shared";
-
-function shouldSendReminder(
-  reminder: WorkoutReminderDocument,
-  now = new Date(),
-): { send: boolean; slotKey?: string } {
-  const zoned = getZonedDateParts(reminder.timezone, now);
-  if (zoned.hour !== reminder.hour || zoned.minute !== reminder.minute) {
-    return { send: false };
-  }
-
-  const slotKey = buildReminderSlotKey(zoned.dateKey, reminder.hour, reminder.minute);
-
-  if (reminder.days.length === 0) {
-    const createdZoned = getZonedDateParts(reminder.timezone, reminder.createdAt);
-    if (createdZoned.dateKey !== zoned.dateKey) {
-      return { send: false };
-    }
-  } else if (!reminder.days.includes(zoned.weekday)) {
-    return { send: false };
-  }
-
-  if (reminder.lastSentSlot === slotKey) {
-    return { send: false };
-  }
-
-  return { send: true, slotKey };
-}
+import { shouldSendReminder } from "@weightloss/shared";
 
 export async function processWorkoutReminders(env: AppEnv): Promise<void> {
   const log = createLogger({ name: "workout-reminder-cron", level: env.LOG_LEVEL });

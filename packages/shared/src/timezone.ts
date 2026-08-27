@@ -66,6 +66,54 @@ export function buildReminderSlotKey(dateKey: string, hour: number, minute: numb
   return `${dateKey}T${hh}:${mm}`;
 }
 
+/** Minutes after the scheduled time during which a missed tick can still send. */
+export const WORKOUT_REMINDER_CATCH_UP_MINUTES = 60;
+
+export type ReminderSendInput = {
+  hour: number;
+  minute: number;
+  days: number[];
+  timezone: string;
+  createdAt: Date;
+  lastSentSlot: string | null;
+};
+
+/**
+ * Send when the zoned clock is on the scheduled minute, or up to
+ * WORKOUT_REMINDER_CATCH_UP_MINUTES late the same allowed day.
+ * lastSentSlot prevents a second send for the same date+time slot.
+ */
+export function shouldSendReminder(
+  reminder: ReminderSendInput,
+  now = new Date(),
+  catchUpMinutes = WORKOUT_REMINDER_CATCH_UP_MINUTES,
+): { send: boolean; slotKey?: string } {
+  const zoned = getZonedDateParts(reminder.timezone, now);
+
+  if (reminder.days.length === 0) {
+    const createdZoned = getZonedDateParts(reminder.timezone, reminder.createdAt);
+    if (createdZoned.dateKey !== zoned.dateKey) {
+      return { send: false };
+    }
+  } else if (!reminder.days.includes(zoned.weekday)) {
+    return { send: false };
+  }
+
+  const slotKey = buildReminderSlotKey(zoned.dateKey, reminder.hour, reminder.minute);
+  if (reminder.lastSentSlot === slotKey) {
+    return { send: false };
+  }
+
+  const nowMinutes = zoned.hour * 60 + zoned.minute;
+  const targetMinutes = reminder.hour * 60 + reminder.minute;
+  const elapsed = nowMinutes - targetMinutes;
+  if (elapsed < 0 || elapsed > catchUpMinutes) {
+    return { send: false };
+  }
+
+  return { send: true, slotKey };
+}
+
 function parseDateKey(dateKey: string): { year: number; month: number; day: number } {
   const [yearRaw, monthRaw, dayRaw] = dateKey.split("-");
   const year = Number(yearRaw);

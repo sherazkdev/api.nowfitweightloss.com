@@ -1,33 +1,6 @@
 import assert from "node:assert/strict";
 import type { WorkoutReminderDocument } from "@weightloss/contracts";
-import { buildReminderSlotKey, getZonedDateParts } from "@weightloss/shared";
-
-function shouldSendReminder(
-  reminder: WorkoutReminderDocument,
-  now = new Date(),
-): { send: boolean; slotKey?: string } {
-  const zoned = getZonedDateParts(reminder.timezone, now);
-  if (zoned.hour !== reminder.hour || zoned.minute !== reminder.minute) {
-    return { send: false };
-  }
-
-  const slotKey = buildReminderSlotKey(zoned.dateKey, reminder.hour, reminder.minute);
-
-  if (reminder.days.length === 0) {
-    const createdZoned = getZonedDateParts(reminder.timezone, reminder.createdAt);
-    if (createdZoned.dateKey !== zoned.dateKey) {
-      return { send: false };
-    }
-  } else if (!reminder.days.includes(zoned.weekday)) {
-    return { send: false };
-  }
-
-  if (reminder.lastSentSlot === slotKey) {
-    return { send: false };
-  }
-
-  return { send: true, slotKey };
-}
+import { shouldSendReminder } from "@weightloss/shared";
 
 function baseReminder(overrides: Partial<WorkoutReminderDocument> = {}): WorkoutReminderDocument {
   return {
@@ -48,12 +21,32 @@ function baseReminder(overrides: Partial<WorkoutReminderDocument> = {}): Workout
 
 // Monday 08:00 Asia/Karachi
 const mondayMorning = new Date("2026-08-24T03:00:00.000Z");
+const mondayLate = new Date("2026-08-24T03:15:00.000Z");
+const mondayTooLate = new Date("2026-08-24T04:01:00.000Z");
+const mondayEarly = new Date("2026-08-24T02:59:00.000Z");
 
-assert.equal(getZonedDateParts("Asia/Karachi", mondayMorning).weekday, 1);
 assert.equal(
   shouldSendReminder(baseReminder(), mondayMorning).send,
   true,
   "weekday match at scheduled time",
+);
+
+assert.equal(
+  shouldSendReminder(baseReminder(), mondayLate).send,
+  true,
+  "catch-up window still sends 15 minutes late",
+);
+
+assert.equal(
+  shouldSendReminder(baseReminder(), mondayTooLate).send,
+  false,
+  "more than 60 minutes late should not send",
+);
+
+assert.equal(
+  shouldSendReminder(baseReminder(), mondayEarly).send,
+  false,
+  "before scheduled time should not send",
 );
 
 assert.equal(
@@ -71,9 +64,9 @@ assert.equal(
 const first = shouldSendReminder(baseReminder(), mondayMorning);
 assert.equal(first.send, true);
 assert.equal(
-  shouldSendReminder(baseReminder({ lastSentSlot: first.slotKey! }), mondayMorning).send,
+  shouldSendReminder(baseReminder({ lastSentSlot: first.slotKey! }), mondayLate).send,
   false,
-  "duplicate slot should not resend",
+  "duplicate slot should not resend even during catch-up",
 );
 
 const emptyDaysCreated = new Date("2026-08-24T03:00:00.000Z");
