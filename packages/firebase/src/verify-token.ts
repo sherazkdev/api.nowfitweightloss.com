@@ -1,4 +1,4 @@
-import { initFirebase, getFirebaseAdmin } from "./firebase-app.js";
+import { getFirebaseAdminApps, initFirebase } from "./firebase-app.js";
 import type { AppEnv } from "@weightloss/config";
 import { isFirebaseConfigured } from "./config.js";
 
@@ -16,10 +16,14 @@ export async function verifyFirebaseIdToken(
 
   initFirebase(env);
 
-  try {
-    const decoded = await getFirebaseAdmin().auth().verifyIdToken(token);
-    return { uid: decoded.uid };
-  } catch {
-    return null;
+  for (const app of getFirebaseAdminApps(env)) {
+    try {
+      const decoded = await app.auth().verifyIdToken(token);
+      return { uid: decoded.uid };
+    } catch {
+      // Try the other Firebase project (Android vs iOS app).
+    }
   }
+
+  return null;
 }

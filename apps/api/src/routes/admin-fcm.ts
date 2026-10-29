@@ -10,6 +10,7 @@ import { requireAdminAuth } from "../plugins/auth.js";
 
 const testBodySchema = z.object({
   fcm_token: z.string().trim().min(1),
+  platform: z.enum(["android", "ios"]).default("android"),
 });
 
 function validationError(reply: FastifyReply, message: string) {
@@ -70,6 +71,7 @@ export async function registerAdminFcmRoutes(app: FastifyInstance) {
           required: ["fcm_token"],
           properties: {
             fcm_token: { type: "string", description: "Target device FCM token" },
+            platform: { type: "string", enum: ["android", "ios"], default: "android" },
           },
         },
       },
@@ -88,10 +90,14 @@ export async function registerAdminFcmRoutes(app: FastifyInstance) {
       }
 
       initFirebase(app.env);
-      const result = await sendWorkoutReminderPush(app.env, [parsed.data.fcm_token], {
-        reminderId: 0,
-        gender: "male",
-      });
+      const result = await sendWorkoutReminderPush(
+        app.env,
+        [{ token: parsed.data.fcm_token, platform: parsed.data.platform }],
+        {
+          reminderId: 0,
+          gender: "male",
+        },
+      );
 
       return reply.send({
         success: true,

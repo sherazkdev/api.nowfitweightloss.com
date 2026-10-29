@@ -9,6 +9,11 @@ export type RegisterDeviceInput = {
   platform: "android" | "ios";
 };
 
+export type UserDevicePushTarget = {
+  token: string;
+  platform: "android" | "ios";
+};
+
 function collection(db: Db) {
   return db.collection<UserDeviceDocument>(COLLECTIONS.userDevices);
 }
@@ -60,14 +65,25 @@ export async function deleteUserDeviceByToken(
   return result.deletedCount === 1;
 }
 
+export async function listUserDevicePushTargets(
+  db: Db,
+  firebaseUid: string,
+): Promise<UserDevicePushTarget[]> {
+  const devices = await collection(db)
+    .find({ firebaseUid }, { projection: { fcmToken: 1, platform: 1, _id: 0 } })
+    .sort({ lastSeenAt: -1 })
+    .toArray();
+
+  return devices.map((device) => ({
+    token: device.fcmToken,
+    platform: device.platform,
+  }));
+}
+
 export async function listUserDeviceTokens(
   db: Db,
   firebaseUid: string,
 ): Promise<string[]> {
-  const devices = await collection(db)
-    .find({ firebaseUid }, { projection: { fcmToken: 1, _id: 0 } })
-    .sort({ lastSeenAt: -1 })
-    .toArray();
-
-  return devices.map((device) => device.fcmToken);
+  const devices = await listUserDevicePushTargets(db, firebaseUid);
+  return devices.map((device) => device.token);
 }

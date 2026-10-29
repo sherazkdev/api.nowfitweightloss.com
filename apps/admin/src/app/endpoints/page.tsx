@@ -52,7 +52,7 @@ function defaultBody(row: EndpointRow) {
     return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN" }, null, 2);
   }
   if (row.path === "/api/admin/fcm/test-notification") {
-    return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN" }, null, 2);
+    return JSON.stringify({ fcm_token: "FCM_DEVICE_TOKEN", platform: "android" }, null, 2);
   }
   if (row.method === "GET" || row.method === "DELETE") return "";
   if (row.path.includes("login")) {

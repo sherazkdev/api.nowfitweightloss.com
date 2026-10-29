@@ -126,9 +126,11 @@ export {
 } from "./repositories/workout-reminder.repository.js";
 export {
   deleteUserDeviceByToken,
+  listUserDevicePushTargets,
   listUserDeviceTokens,
   upsertUserDevice,
   type RegisterDeviceInput,
+  type UserDevicePushTarget,
 } from "./repositories/user-device.repository.js";
 export {
   deleteAdminWorkoutReminder,

@@ -83,7 +83,7 @@ export const ADMIN_CONTENT_ENDPOINTS: EndpointRow[] = [
   { method: "GET", path: "/api/admin/devices", desc: "List FCM devices. Query: platform=android|ios, status=active|stale, search, page, limit, cursor", auth: "bearer-or-key", group: "Admin content" },
   { method: "DELETE", path: "/api/admin/devices/:id", desc: "Delete registered device", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/fcm/overview", desc: "FCM overview dashboard data", auth: "bearer-or-key", group: "Admin content" },
-  { method: "POST", path: "/api/admin/fcm/test-notification", desc: "Send FCM test push. Body: { fcm_token }", auth: "bearer-or-key", group: "Admin content" },
+  { method: "POST", path: "/api/admin/fcm/test-notification", desc: "Send FCM test push. Body: { fcm_token, platform?: android|ios }", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/delivery-logs/summary", desc: "Delivery stats. Query: days (1–90, default 30)", auth: "bearer-or-key", group: "Admin content" },
   { method: "GET", path: "/api/admin/delivery-logs", desc: "List delivery logs. Query: status, platform, search, days, page, limit, cursor", auth: "bearer-or-key", group: "Admin content" },
   { method: "POST", path: "/api/admin/delivery-logs/:id/retry", desc: "Retry failed reminder push", auth: "bearer-or-key", group: "Admin content" },

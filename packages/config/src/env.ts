@@ -147,6 +147,11 @@ export const envSchema = z.object({
   FIREBASE_CLIENT_EMAIL: z.string().optional().default(""),
   FIREBASE_PRIVATE_KEY: z.string().optional().default(""),
 
+  /** iOS mobile app Firebase project (when different from Android). All three required together. */
+  FIREBASE_IOS_PROJECT_ID: z.string().optional().default(""),
+  FIREBASE_IOS_CLIENT_EMAIL: z.string().optional().default(""),
+  FIREBASE_IOS_PRIVATE_KEY: z.string().optional().default(""),
+
   WORKOUT_REMINDERS_CRON_ENABLED: boolFromEnv.default(true),
   WORKOUT_REMINDERS_CRON_INTERVAL_MS: positiveInt(60000),
 }).superRefine((data, ctx) => {
@@ -172,6 +177,20 @@ export const envSchema = z.object({
         message: "S3_SECRET_ACCESS_KEY is required when STORAGE_DRIVER=s3",
       });
     }
+  }
+
+  const iosFirebaseFields = [
+    data.FIREBASE_IOS_PROJECT_ID.trim(),
+    data.FIREBASE_IOS_CLIENT_EMAIL.trim(),
+    data.FIREBASE_IOS_PRIVATE_KEY.trim(),
+  ];
+  const iosFirebaseSetCount = iosFirebaseFields.filter(Boolean).length;
+  if (iosFirebaseSetCount > 0 && iosFirebaseSetCount < 3) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["FIREBASE_IOS_PROJECT_ID"],
+      message: "Set FIREBASE_IOS_PROJECT_ID, FIREBASE_IOS_CLIENT_EMAIL, and FIREBASE_IOS_PRIVATE_KEY together",
+    });
   }
 
   if (data.NODE_ENV !== "production") return;

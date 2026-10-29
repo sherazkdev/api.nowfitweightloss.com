@@ -26,6 +26,7 @@ export default function FcmOverviewPage() {
   const [error, setError] = useState("");
   const [testOpen, setTestOpen] = useState(false);
   const [testToken, setTestToken] = useState("");
+  const [testPlatform, setTestPlatform] = useState<"android" | "ios">("android");
   const [testSending, setTestSending] = useState(false);
   const [testMessage, setTestMessage] = useState("");
 
@@ -53,7 +54,7 @@ export default function FcmOverviewPage() {
     setTestSending(true);
     setTestMessage("");
     try {
-      const result = await sendFcmTestNotificationAdmin(testToken.trim());
+      const result = await sendFcmTestNotificationAdmin(testToken.trim(), testPlatform);
       setTestMessage(
         result.successCount > 0
           ? "Test notification sent successfully."
@@ -111,6 +112,14 @@ export default function FcmOverviewPage() {
           <div className="mb-4 rounded-[14px] border border-[var(--border)] bg-[var(--card-bg)] p-4">
             <p className="mb-2 text-[13px] font-medium leading-5">Send test push</p>
             <div className="flex flex-col gap-2 sm:flex-row">
+              <select
+                value={testPlatform}
+                onChange={(event) => setTestPlatform(event.target.value as "android" | "ios")}
+                className="h-9 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 text-[13px] outline-none focus:border-[var(--bright-purple)]"
+              >
+                <option value="android">Android</option>
+                <option value="ios">iOS</option>
+              </select>
               <input
                 value={testToken}
                 onChange={(event) => setTestToken(event.target.value)}

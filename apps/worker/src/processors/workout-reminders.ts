@@ -3,7 +3,7 @@ import type { WorkoutReminderDocument } from "@weightloss/contracts";
 import {
   getMongo,
   listEnabledWorkoutReminders,
-  listUserDeviceTokens,
+  listUserDevicePushTargets,
   markWorkoutReminderSent,
   recordNotificationDelivery,
 } from "@weightloss/database";
@@ -26,8 +26,8 @@ export async function processWorkoutReminders(env: AppEnv): Promise<void> {
     const decision = shouldSendReminder(reminder);
     if (!decision.send || !decision.slotKey) continue;
 
-    const tokens = await listUserDeviceTokens(db, reminder.firebaseUid);
-    if (tokens.length === 0) {
+    const devices = await listUserDevicePushTargets(db, reminder.firebaseUid);
+    if (devices.length === 0) {
       await recordNotificationDelivery(db, {
         firebaseUid: reminder.firebaseUid,
         reminderId: reminder.id,
@@ -45,7 +45,7 @@ export async function processWorkoutReminders(env: AppEnv): Promise<void> {
     }
 
     try {
-      const result = await sendWorkoutReminderPush(env, tokens, {
+      const result = await sendWorkoutReminderPush(env, devices, {
         reminderId: reminder.id,
         gender: reminder.gender,
       });
@@ -57,7 +57,7 @@ export async function processWorkoutReminders(env: AppEnv): Promise<void> {
         gender: reminder.gender,
         hour: reminder.hour,
         minute: reminder.minute,
-        tokenCount: tokens.length,
+        tokenCount: devices.length,
         successCount: result.successCount,
         failureCount: result.failureCount,
         slotKey: decision.slotKey,
@@ -79,9 +79,9 @@ export async function processWorkoutReminders(env: AppEnv): Promise<void> {
         gender: reminder.gender,
         hour: reminder.hour,
         minute: reminder.minute,
-        tokenCount: tokens.length,
+        tokenCount: devices.length,
         successCount: 0,
-        failureCount: tokens.length,
+        failureCount: devices.length,
         slotKey: decision.slotKey,
         errorMessage: error instanceof Error ? error.message : "Send failed",
       });

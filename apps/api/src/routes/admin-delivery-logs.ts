@@ -8,7 +8,7 @@ import {
   getAdminDeliveryLogSummary,
   getMongo,
   listAdminDeliveryLogs,
-  listUserDeviceTokens,
+  listUserDevicePushTargets,
   recordNotificationDelivery,
 } from "@weightloss/database";
 import { initFirebase, isFirebaseConfigured, sendWorkoutReminderPush } from "@weightloss/firebase";
@@ -178,18 +178,18 @@ export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
         });
       }
 
-      const tokens = await listUserDeviceTokens(db, reminder.firebaseUid);
+      const devices = await listUserDevicePushTargets(db, reminder.firebaseUid);
       initFirebase(app.env);
 
       let successCount = 0;
       let failureCount = 0;
       let errorMessage: string | null = null;
 
-      if (tokens.length === 0) {
+      if (devices.length === 0) {
         errorMessage = "No registered device tokens";
       } else {
         try {
-          const result = await sendWorkoutReminderPush(app.env, tokens, {
+          const result = await sendWorkoutReminderPush(app.env, devices, {
             reminderId: reminder.id,
             gender: reminder.gender,
           });
@@ -197,7 +197,7 @@ export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
           failureCount = result.failureCount;
         } catch (error) {
           errorMessage = error instanceof Error ? error.message : "Send failed";
-          failureCount = tokens.length;
+          failureCount = devices.length;
         }
       }
 
@@ -210,7 +210,7 @@ export async function registerAdminDeliveryLogRoutes(app: FastifyInstance) {
         gender: reminder.gender,
         hour: reminder.hour,
         minute: reminder.minute,
-        tokenCount: tokens.length,
+        tokenCount: devices.length,
         successCount,
         failureCount,
         slotKey: `${slotKey}:retry:${Date.now()}`,

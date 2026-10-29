@@ -67,10 +67,11 @@ export async function fetchFcmOverviewAdmin(): Promise<FcmOverviewResponse> {
 
 export async function sendFcmTestNotificationAdmin(
   fcmToken: string,
+  platform: "android" | "ios" = "android",
 ): Promise<{ successCount: number; failureCount: number }> {
   return apiPost<{ successCount: number; failureCount: number }>(
     "/api/admin/fcm/test-notification",
-    { fcm_token: fcmToken },
+    { fcm_token: fcmToken, platform },
   );
 }
 
